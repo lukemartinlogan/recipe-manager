@@ -1,0 +1,31 @@
+{
+  # Other
+    "almond_milk": 2257045,
+    "chobani_greek_yogurt_strawberry": 2652618,
+    "body_fortress": 2405921,
+
+    # Nuts
+    "peanuts": 2515376,
+    "sesame_seeds": 2343061,
+
+    # Vegetables
+    "spaghetti_squash": 75233220,
+    "winter_butternut_squash": 169295,
+    "broccoli": 170379,
+    "babby_carrots": 168568,
+    "cucumber": 75111000,
+    "red_bell_pepper": 2258590,
+    "red_onion": 790577,
+    "white_onion": 1104962,
+    "yellow_onion": 790646,
+
+    # Fruits
+    "mango": 169910,
+    "red_unseeded_grapes": 2346412,
+    "cherry": 171719,
+    "blueberry": 171711,
+    "pear": 2344749,
+
+    # Oils
+    "peanut_oil": 1750348
+}
