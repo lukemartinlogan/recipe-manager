@@ -8,6 +8,9 @@ with open('subset.yaml') as f:
     subset = yaml.safe_load(f)
 df = df.fillna(0)
 
+with open('dv.yaml') as f:
+    dv = yaml.safe_load(f)
+
 class MealPlan:
     def __init__(self, df, cals):
         self.cals = cals
