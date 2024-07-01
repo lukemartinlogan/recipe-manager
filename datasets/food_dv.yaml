@@ -1,58 +1,154 @@
-"Energy": 2000 #kCal
-"Cholesterol": 300 #mg
+Energy: 
+  amt: 2000
+  unit: kCal
+Cholesterol: 
+  amt: 300
+  unit: mg
 
 # Carbs
-"Total carbs": 225 #g
-"Fiber": 30 #g
-"Sugar": 25 #g
+Total carbs:
+  amt: 225
+  unit: g
+Fiber:
+  amt: 30
+  unit: g
+Added Sugar:
+  amt: 36
+  unit: g
 
 # Fats
-"Sat. fat": 30 #g
-"Trans. fat": 2 #g
-"Total fat": 50 #g
+Sat. fat: 
+  amt: 30 
+  unit: g
+Trans. fat: 
+  amt: 2 
+  unit: g
+Total fat: 
+  amt: 50 
+  unit: g
 
 # Vitamins
-"Vitamin A": 900 #ug
-"Vitamin B-1, Thiamin": 1.1 #mg
-"Vitamin B-2, Riboflavin": 1.3 #mg
-"Vitamin B-3, Niacin": 16 #mg
-"Vitamin B-5, Pantothenic Acid": 5 #mg
-"Vitamin B-6": 1.3 #mg
-"Vitamin B-7, Biotin": 30 #ug
-"Vitamin B-9, Folate": 400 #ug
-"Vitamin B-12, Cobalamin": 2.4 #ug
-"Vitamin C": 90 #mg
-"Vitamin D2": 20 #ug
-"Vitamin D3": 15 #ug
-"Vitamin E": 15 #mg
-"Vitamin K": 75 # ug. 1ug/kg of body weight
+Vitamin A: 
+  amt: 900 
+  unit: ug
+Vitamin B-1, Thiamin: 
+  amt: 1.1 
+  unit: mg
+Vitamin B-2, Riboflavin:
+  amt: 1.3 
+  unit: mg
+Vitamin B-3, Niacin:
+  amt: 16 
+  unit: mg
+Vitamin B-5, Pantothenic Acid: 
+  amt: 5 
+  unit: mg
+Vitamin B-6: 
+  amt: 1.3 
+  unit: mg
+Vitamin B-7, Biotin: 
+  amt: 30 
+  unit: ug
+Vitamin B-9, Folate: 
+  amt: 400 
+  unit: ug
+Vitamin B-12, Cobalamin: 
+  amt: 2.4 
+  unit: ug
+Vitamin C: 
+  amt: 90 
+  unit: mg
+Vitamin D2: 
+  amt: 20 
+  unit: ug
+Vitamin D3: 
+  amt: 15 
+  unit: ug
+Vitamin E: 
+  amt: 15 
+  unit: mg
+Vitamin K: 
+  amt: 75 
+  unit: ug #1ug/kg of body weight
 
 # Minerals
-"Iron": 18 #mg
-"Calcium": 1000 #mg
-"Copper": 1.5 #mg
-"Chloride": 2.3 #g
-"Iodine": 150 #ug
-"Sodium": 2300 #mg
-"Sulfur": 850 #mg
-"Potassium": 4700 #mg
-"Manganese": 2.3 #mg
-"Phosphorus": 1250 #mg
-"Fluoride": 3 #mg
-"Magnesium": 420 #mg
-"Zinc": 11 #mg
-"Selenium": 55 #ug
-"Chromium": 35 #ug
-"Molybdenum": 45 #ug
+Iron: 
+  amt: 18 
+  unit: mg
+Calcium: 
+  amt: 1000
+  unit: mg
+Copper: 
+  amt: 1.5 
+  unit: mg
+Chloride: 
+  amt: 2.3 
+  unit: g
+Iodine: 
+  amt: 150
+  unit: ug
+Sodium: 
+  amt: 2300
+  unit: mg
+Sulfur: 
+  amt: 850
+  unit: mg
+Potassium: 
+  amt: 4700
+  unit: mg
+Manganese: 
+  amt: 2.3
+  unit: mg
+Phosphorus: 
+  amt: 1250
+  unit: mg
+Fluoride: 
+  amt: 3 
+  unit: mg
+Magnesium: 
+  amt: 420
+  unit: mg
+Zinc: 
+  amt: 11 
+  unit: mg
+Selenium: 
+  amt: 55 
+  unit: ug
+Chromium: 
+  amt: 35
+  unit: ug
+Molybdenum: 
+  amt: 45
+  unit: ug
 
 # Amino Acids
-"Protein": 60 #g
-"Histidine": 2 #g
-"Isoleucine": 2.2 #g
-"Leucine": 4.4 #g
-"Lysine": 3 #g
-"Methionine": 1 #g
-"Phenylalanine": 1.8 #g
-"Threonine": .5 #g
-"Tryptophan": 1 #g
-"Valine": 2.08 #g
+Protein: 
+  amt: 120
+  unit: g
+Histidine: 
+  amt: 2
+  unit: g
+Isoleucine: 
+  amt: 2.2
+  unit: g
+Leucine: 
+  amt: 4.4
+  unit: g
+Lysine: 
+  amt: 3 
+  unit: g
+Methionine: 
+  amt: 1 
+  unit: g
+Phenylalanine: 
+  amt: 1.8
+  unit: g
+Threonine: 
+  amt: .5
+  unit: g
+Tryptophan: 
+  amt: 1 
+  unit: g
+Valine: 
+  amt: 2.08 
+  unit: g
