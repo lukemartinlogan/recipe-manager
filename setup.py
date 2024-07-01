@@ -23,6 +23,8 @@ setuptools.setup(
     ],
     install_requires=[
         'pyyaml',
+        'zipfile',
+        'requests',
         'jarvis-util @ git+https://github.com/scs-lab/jarvis-util.git#egg=jarvis-util'
     ]
 )

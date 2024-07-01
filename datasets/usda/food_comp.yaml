@@ -33,7 +33,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 19.33
   Energy (Atwater General Factors): 19.33
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.0
@@ -87,6 +87,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.03857
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.005
@@ -167,7 +168,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.0
@@ -221,6 +222,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -301,7 +303,7 @@
   Cystine: 0.008
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.047
@@ -354,7 +356,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.11
-  Sugars, Total: 0.0
+  Sugars, Total: 9.96
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.037
@@ -435,7 +438,7 @@
   Cystine: 0.028
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.031
@@ -488,7 +491,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.1
-  Sugars, Total: 0.0
+  Sugars, Total: 1.7
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.071
@@ -569,7 +573,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.0
@@ -623,6 +627,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -703,7 +708,7 @@
   Cystine: 0.007
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.007
@@ -756,7 +761,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 2.72
-  Sugars, Total: 0.0
+  Sugars, Total: 4.76
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.03
@@ -837,7 +843,7 @@
   Cystine: 0.01
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.047
@@ -890,7 +896,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.15
-  Sugars, Total: 0.0
+  Sugars, Total: 12.82
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.027
@@ -971,7 +978,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 75.699433
   Energy (Atwater General Factors): 71.4265
   Energy (Atwater Specific Factors): 75.699433
   Fatty acids, total monounsaturated: 0.0
@@ -1025,6 +1032,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -1105,7 +1113,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.0
@@ -1158,7 +1166,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.0
-  Sugars, Total: 0.0
+  Sugars, Total: 5.69
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -1239,7 +1248,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 147.0
   Energy (Atwater General Factors): 143.0
   Energy (Atwater Specific Factors): 147.0
   Fatty acids, total monounsaturated: 3.63
@@ -1293,6 +1302,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.2
+  Sugars, Total NLEA: 0.2
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.077
@@ -1373,7 +1383,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 203.10632
   Energy (Atwater General Factors): 197.294
   Energy (Atwater Specific Factors): 203.10632
   Fatty acids, total monounsaturated: 0.0
@@ -1427,6 +1437,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -1507,7 +1518,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 136.22202
   Energy (Atwater General Factors): 129.984
   Energy (Atwater Specific Factors): 136.22202
   Fatty acids, total monounsaturated: 0.0
@@ -1561,6 +1572,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -1641,7 +1653,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 85.919
   Energy (Atwater General Factors): 85.919
   Energy (Atwater Specific Factors): 77.151876
   Fatty acids, total monounsaturated: 0.0
@@ -1695,6 +1707,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 17.341
+  Sugars, Total NLEA: 17.341
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -1775,7 +1788,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.14
@@ -1828,7 +1841,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 6.97
-  Sugars, Total: 0.0
+  Sugars, Total: 13.66
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.028
@@ -1909,7 +1923,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 3.33
@@ -1962,7 +1976,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.0
-  Sugars, Total: 0.0
+  Sugars, Total: 17.78
+  Sugars, Total NLEA: 0.0
   Added Sugar: 15.6
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -2043,7 +2058,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 16.38
   Delta-7-Stigmastenol: 8.228
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 57.14
@@ -2097,6 +2112,7 @@
   Stigmasterol: 17.81
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -2177,7 +2193,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 44.0
   Energy (Atwater General Factors): 44.0
   Energy (Atwater Specific Factors): 42.0
   Fatty acids, total monounsaturated: 0.0
@@ -2231,6 +2247,7 @@
   Stigmasterol: 0.0
   Sucrose: 1.68
   Sugars, Total: 5.76
+  Sugars, Total NLEA: 5.76
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -2311,7 +2328,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 36.0
   Energy (Atwater General Factors): 36.0
   Energy (Atwater Specific Factors): 33.0
   Fatty acids, total monounsaturated: 0.0
@@ -2365,6 +2382,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.59
   Sugars, Total: 5.76
+  Sugars, Total NLEA: 5.76
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -2445,7 +2463,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 38.0
   Energy (Atwater General Factors): 38.0
   Energy (Atwater Specific Factors): 36.0
   Fatty acids, total monounsaturated: 0.0
@@ -2499,6 +2517,7 @@
   Stigmasterol: 0.0
   Sucrose: 1.6
   Sugars, Total: 5.82
+  Sugars, Total NLEA: 5.82
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -2579,7 +2598,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.0
@@ -2632,7 +2651,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.0
-  Sugars, Total: 0.0
+  Sugars, Total: 0.83
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -2713,7 +2733,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 588.332
   Energy (Atwater General Factors): 588.332
   Energy (Atwater Specific Factors): 550.62181
   Fatty acids, total monounsaturated: 0.0
@@ -2767,6 +2787,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -2813,12 +2834,12 @@
   Vitamin K: 0.0
   Vitamin A: 0.0
 ##############################################
-- Name: Pear, raw
+- Name: Peppers, bell, green, raw
   25-hydroxycholecalciferol: 0.0
   Alanine: 0.0
   Alcohol, ethyl: 0.0
   Arginine: 0.0
-  Ash: 0.0
+  Ash: 0.2806
   Aspartic acid: 0.0
   Beta-sitostanol: 0.0
   Beta-sitosterol: 0.0
@@ -2826,41 +2847,41 @@
   Vitamin B-7, Biotin: 0.0
   Brassicasterol: 0.0
   Caffeine: 0.0
-  Calcium: 9.0
+  Calcium: 7.496
   Campestanol: 0.0
   Campesterol: 0.0
-  Total carbs: 15.18
+  Total carbs: 4.7781
   Carbohydrate, by summation: 0.0
-  Carotene, alpha: 1.0
-  Carotene, beta: 12.0
+  Carotene, alpha: 0.0
+  Carotene, beta: 0.0
   Cholesterol: 0.0
   Choline, free: 0.0
   Choline, from glycerophosphocholine: 0.0
   Choline, from phosphocholine: 0.0
   Choline, from phosphotidyl choline: 0.0
   Choline, from sphingomyelin: 0.0
-  Choline, total: 5.1
-  Copper: 0.077
+  Choline, total: 0.0
+  Copper: 0.05775
   Cryptoxanthin, alpha: 0.0
-  Cryptoxanthin, beta: 2.0
+  Cryptoxanthin, beta: 0.0
   Cysteine: 0.0
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
-  Energy (Atwater General Factors): 0.0
-  Energy (Atwater Specific Factors): 0.0
-  Fatty acids, total monounsaturated: 0.084
-  Fatty acids, total polyunsaturated: 0.094
-  Sat. fat: 0.022
+  Energy: 22.9291
+  Energy (Atwater General Factors): 22.9291
+  Energy (Atwater Specific Factors): 19.692148
+  Fatty acids, total monounsaturated: 0.0
+  Fatty acids, total polyunsaturated: 0.0
+  Sat. fat: 0.0
   Trans. fat: 0.0
   Fatty acids, total trans-monoenoic: 0.0
   Fatty acids, total trans-polyenoic: 0.0
-  Fiber: 3.1
+  Fiber: 0.9419
   Fluoride: 0.0
-  Folate, DFE: 7.0
-  Folate, food: 7.0
-  Vitamin B-9, Folate: 7.0
+  Folate, DFE: 0.0
+  Folate, food: 0.0
+  Vitamin B-9, Folate: 22.21
   Folic acid: 0.0
   Fructose: 0.0
   Galactose: 0.0
@@ -2870,40 +2891,41 @@
   Histidine: 0.0
   Hydroxyproline: 0.0
   Iodine: 0.0
-  Iron: 0.18
+  Iron: 0.1861
   Isoleucine: 0.0
   Lactose: 0.0
   Leucine: 0.0
   Lutein: 0.0
-  Lutein + zeaxanthin: 46.0
+  Lutein + zeaxanthin: 0.0
   Lycopene: 0.0
   Lysine: 0.0
-  Magnesium: 7.0
+  Magnesium: 9.004
   Maltose: 0.0
-  Manganese: 0.0
+  Manganese: 0.09991
   Methionine: 0.0
-  Vitamin B-3, Niacin: 0.162
-  Nitrogen: 0.0
+  Vitamin B-3, Niacin: 0.6363
+  Nitrogen: 0.1144
   Vitamin B-5, Pantothenic Acid: 0.0
   Phenylalanine: 0.0
-  Phosphorus: 11.0
+  Phosphorus: 16.75
   Phytosterols: 0.0
-  Potassium: 104.0
+  Potassium: 163.1
   Proline: 0.0
-  Protein: 0.37
+  Protein: 0.715
   Retinol: 0.0
-  Vitamin B-2, Riboflavin: 0.026
-  Selenium: 0.1
+  Vitamin B-2, Riboflavin: 0.08875
+  Selenium: 0.0
   Serine: 0.0
-  Sodium: 3.0
+  Sodium: 0.0
   Starch: 0.0
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
-  Vitamin B-1, Thiamin: 0.012
+  Vitamin B-1, Thiamin: 0.03906
   Threonine: 0.0
   Tocopherol, beta: 0.0
   Tocopherol, delta: 0.0
@@ -2912,39 +2934,174 @@
   Tocotrienol, beta: 0.0
   Tocotrienol, delta: 0.0
   Tocotrienol, gamma: 0.0
-  Total Sugar: 9.73
+  Total Sugar: 0.0
   Total dietary fiber (AOAC 2011.25): 0.0
   Total fat (NLEA): 0.0
-  Total fat: 0.15
+  Total fat: 0.1063
   Total sugar alcohols: 0.0
   Tryptophan: 0.0
   Tyrosine: 0.0
   Valine: 0.0
   Vitamin A, IU: 0.0
-  Vitamin A, RAE: 1.0
+  Vitamin A, RAE: 0.0
   Vitamin B-12, Cobalamin: 0.0
   Vitamin B-12, added: 0.0
-  Vitamin B-6: 0.028
-  Vitamin C: 4.3
+  Vitamin B-6: 0.2468
+  Vitamin C: 99.51
   Vitamin D (D2 + D3): 0.0
   Vitamin D (D2 + D3), International Units: 0.0
   Vitamin D2: 0.0
   Vitamin D3: 0.0
-  Vitamin E: 0.12
+  Vitamin E: 0.0
   Vitamin E, added: 0.0
   Vitamin K (Dihydrophylloquinone): 0.0
   Vitamin K (Menaquinone-4): 0.0
-  Vitamin K (phylloquinone): 4.2
-  Water: 84.02
+  Vitamin K (phylloquinone): 0.0
+  Water: 94.12
   Zeaxanthin: 0.0
-  Zinc: 0.09
+  Zinc: 0.1256
   cis-Lutein/Zeaxanthin: 0.0
   cis-Lycopene: 0.0
   cis-beta-Carotene: 0.0
   trans-Lycopene: 0.0
   trans-beta-Carotene: 0.0
   Weight: 100
-  Vitamin K: 4.2
+  Vitamin K: 0.0
+  Vitamin A: 0.0
+##############################################
+- Name: Peppers, bell, orange, raw
+  25-hydroxycholecalciferol: 0.0
+  Alanine: 0.0
+  Alcohol, ethyl: 0.0
+  Arginine: 0.0
+  Ash: 0.3794
+  Aspartic acid: 0.0
+  Beta-sitostanol: 0.0
+  Beta-sitosterol: 0.0
+  Betaine: 0.0
+  Vitamin B-7, Biotin: 0.58
+  Brassicasterol: 0.0
+  Caffeine: 0.0
+  Calcium: 4.899
+  Campestanol: 0.0
+  Campesterol: 0.0
+  Total carbs: 6.703125
+  Carbohydrate, by summation: 0.0
+  Carotene, alpha: 0.0
+  Carotene, beta: 0.0
+  Cholesterol: 0.0
+  Choline, free: 0.0
+  Choline, from glycerophosphocholine: 0.0
+  Choline, from phosphocholine: 0.0
+  Choline, from phosphotidyl choline: 0.0
+  Choline, from sphingomyelin: 0.0
+  Choline, total: 0.0
+  Copper: 0.0351
+  Cryptoxanthin, alpha: 0.0
+  Cryptoxanthin, beta: 0.0
+  Cysteine: 0.0
+  Cystine: 0.0
+  Delta-5-avenasterol: 0.0
+  Delta-7-Stigmastenol: 0.0
+  Energy: 31.7404
+  Energy (Atwater General Factors): 31.7404
+  Energy (Atwater Specific Factors): 27.38430325
+  Fatty acids, total monounsaturated: 0.0
+  Fatty acids, total polyunsaturated: 0.0
+  Sat. fat: 0.0
+  Trans. fat: 0.0
+  Fatty acids, total trans-monoenoic: 0.0
+  Fatty acids, total trans-polyenoic: 0.0
+  Fiber: 0.9674
+  Fluoride: 0.0
+  Folate, DFE: 0.0
+  Folate, food: 0.0
+  Vitamin B-9, Folate: 0.0
+  Folic acid: 0.0
+  Fructose: 0.0
+  Galactose: 0.0
+  Glucose: 0.0
+  Glutamic acid: 0.0
+  Glycine: 0.0
+  Histidine: 0.0
+  Hydroxyproline: 0.0
+  Iodine: 0.0
+  Iron: 0.3652
+  Isoleucine: 0.0
+  Lactose: 0.0
+  Leucine: 0.0
+  Lutein: 0.0
+  Lutein + zeaxanthin: 0.0
+  Lycopene: 0.0
+  Lysine: 0.0
+  Magnesium: 10.43
+  Maltose: 0.0
+  Manganese: 0.1491
+  Methionine: 0.0
+  Vitamin B-3, Niacin: 1.078
+  Nitrogen: 0.1411
+  Vitamin B-5, Pantothenic Acid: 0.0
+  Phenylalanine: 0.0
+  Phosphorus: 26.59
+  Phytosterols: 0.0
+  Potassium: 200.8
+  Proline: 0.0
+  Protein: 0.881875
+  Retinol: 0.0
+  Vitamin B-2, Riboflavin: 0.1017
+  Selenium: 0.3
+  Serine: 0.0
+  Sodium: 0.0
+  Starch: 0.0
+  Stigmastadiene: 0.0
+  Stigmasterol: 0.0
+  Sucrose: 0.0
+  Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
+  Added Sugar: 0.0
+  Theobromine: 0.0
+  Vitamin B-1, Thiamin: 0.05456
+  Threonine: 0.0
+  Tocopherol, beta: 0.0
+  Tocopherol, delta: 0.0
+  Tocopherol, gamma: 0.0
+  Tocotrienol, alpha: 0.0
+  Tocotrienol, beta: 0.0
+  Tocotrienol, delta: 0.0
+  Tocotrienol, gamma: 0.0
+  Total Sugar: 0.0
+  Total dietary fiber (AOAC 2011.25): 0.0
+  Total fat (NLEA): 0.0
+  Total fat: 0.1556
+  Total sugar alcohols: 0.0
+  Tryptophan: 0.0
+  Tyrosine: 0.0
+  Valine: 0.0
+  Vitamin A, IU: 0.0
+  Vitamin A, RAE: 0.0
+  Vitamin B-12, Cobalamin: 0.0
+  Vitamin B-12, added: 0.0
+  Vitamin B-6: 0.3324
+  Vitamin C: 158.3
+  Vitamin D (D2 + D3): 0.0
+  Vitamin D (D2 + D3), International Units: 0.0
+  Vitamin D2: 0.0
+  Vitamin D3: 0.0
+  Vitamin E: 0.0
+  Vitamin E, added: 0.0
+  Vitamin K (Dihydrophylloquinone): 0.0
+  Vitamin K (Menaquinone-4): 0.0
+  Vitamin K (phylloquinone): 0.0
+  Water: 91.88
+  Zeaxanthin: 0.0
+  Zinc: 0.2422
+  cis-Lutein/Zeaxanthin: 0.0
+  cis-Lycopene: 0.0
+  cis-beta-Carotene: 0.0
+  trans-Lycopene: 0.0
+  trans-beta-Carotene: 0.0
+  Weight: 100
+  Vitamin K: 0.0
   Vitamin A: 0.0
 ##############################################
 - Name: Peppers, bell, red, raw
@@ -2981,7 +3138,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 31.3256
   Energy (Atwater General Factors): 31.3256
   Energy (Atwater Specific Factors): 26.98843175
   Fatty acids, total monounsaturated: 0.0
@@ -3035,6 +3192,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.05494
@@ -3081,6 +3239,141 @@
   Vitamin K: 0.0
   Vitamin A: 0.0
 ##############################################
+- Name: Peppers, bell, yellow, raw
+  25-hydroxycholecalciferol: 0.0
+  Alanine: 0.0
+  Alcohol, ethyl: 0.0
+  Arginine: 0.0
+  Ash: 0.3778
+  Aspartic acid: 0.0
+  Beta-sitostanol: 0.0
+  Beta-sitosterol: 0.0
+  Betaine: 0.0
+  Vitamin B-7, Biotin: 0.46
+  Brassicasterol: 0.0
+  Caffeine: 0.0
+  Calcium: 6.686
+  Campestanol: 0.0
+  Campesterol: 0.0
+  Total carbs: 6.601725
+  Carbohydrate, by summation: 0.0
+  Carotene, alpha: 0.0
+  Carotene, beta: 0.0
+  Cholesterol: 0.0
+  Choline, free: 0.0
+  Choline, from glycerophosphocholine: 0.0
+  Choline, from phosphocholine: 0.0
+  Choline, from phosphotidyl choline: 0.0
+  Choline, from sphingomyelin: 0.0
+  Choline, total: 0.0
+  Copper: 0.04529
+  Cryptoxanthin, alpha: 0.0
+  Cryptoxanthin, beta: 0.0
+  Cysteine: 0.0
+  Cystine: 0.0
+  Delta-5-avenasterol: 0.0
+  Delta-7-Stigmastenol: 0.0
+  Energy: 30.7743
+  Energy (Atwater General Factors): 30.7743
+  Energy (Atwater Specific Factors): 26.58104025
+  Fatty acids, total monounsaturated: 0.0
+  Fatty acids, total polyunsaturated: 0.0
+  Sat. fat: 0.0
+  Trans. fat: 0.0
+  Fatty acids, total trans-monoenoic: 0.0
+  Fatty acids, total trans-polyenoic: 0.0
+  Fiber: 1.071
+  Fluoride: 0.0
+  Folate, DFE: 0.0
+  Folate, food: 0.0
+  Vitamin B-9, Folate: 41.63
+  Folic acid: 0.0
+  Fructose: 0.0
+  Galactose: 0.0
+  Glucose: 0.0
+  Glutamic acid: 0.0
+  Glycine: 0.0
+  Histidine: 0.0
+  Hydroxyproline: 0.0
+  Iodine: 0.0
+  Iron: 0.3596
+  Isoleucine: 0.0
+  Lactose: 0.0
+  Leucine: 0.0
+  Lutein: 0.0
+  Lutein + zeaxanthin: 0.0
+  Lycopene: 0.0
+  Lysine: 0.0
+  Magnesium: 10.34
+  Maltose: 0.0
+  Manganese: 0.1417
+  Methionine: 0.0
+  Vitamin B-3, Niacin: 0.91
+  Nitrogen: 0.1311
+  Vitamin B-5, Pantothenic Acid: 0.0
+  Phenylalanine: 0.0
+  Phosphorus: 24.76
+  Phytosterols: 0.0
+  Potassium: 197.3
+  Proline: 0.0
+  Protein: 0.819375
+  Retinol: 0.0
+  Vitamin B-2, Riboflavin: 0.09778
+  Selenium: 0.0
+  Serine: 0.0
+  Sodium: 0.0
+  Starch: 0.0
+  Stigmastadiene: 0.0
+  Stigmasterol: 0.0
+  Sucrose: 0.0
+  Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
+  Added Sugar: 0.0
+  Theobromine: 0.0
+  Vitamin B-1, Thiamin: 0.04867
+  Threonine: 0.0
+  Tocopherol, beta: 0.0
+  Tocopherol, delta: 0.0
+  Tocopherol, gamma: 0.0
+  Tocotrienol, alpha: 0.0
+  Tocotrienol, beta: 0.0
+  Tocotrienol, delta: 0.0
+  Tocotrienol, gamma: 0.0
+  Total Sugar: 0.0
+  Total dietary fiber (AOAC 2011.25): 0.0
+  Total fat (NLEA): 0.0
+  Total fat: 0.1211
+  Total sugar alcohols: 0.0
+  Tryptophan: 0.0
+  Tyrosine: 0.0
+  Valine: 0.0
+  Vitamin A, IU: 0.0
+  Vitamin A, RAE: 0.0
+  Vitamin B-12, Cobalamin: 0.0
+  Vitamin B-12, added: 0.0
+  Vitamin B-6: 0.2918
+  Vitamin C: 138.8
+  Vitamin D (D2 + D3): 0.0
+  Vitamin D (D2 + D3), International Units: 0.0
+  Vitamin D2: 0.0
+  Vitamin D3: 0.0
+  Vitamin E: 0.0
+  Vitamin E, added: 0.0
+  Vitamin K (Dihydrophylloquinone): 0.0
+  Vitamin K (Menaquinone-4): 0.0
+  Vitamin K (phylloquinone): 0.0
+  Water: 92.08
+  Zeaxanthin: 0.0
+  Zinc: 0.193
+  cis-Lutein/Zeaxanthin: 0.0
+  cis-Lycopene: 0.0
+  cis-beta-Carotene: 0.0
+  trans-Lycopene: 0.0
+  trans-beta-Carotene: 0.0
+  Weight: 100
+  Vitamin K: 0.0
+  Vitamin A: 0.0
+##############################################
 - Name: STRAWBERRY ZERO SUGAR NONFAT GREEK YOGURT, STRAWBERRY
   25-hydroxycholecalciferol: 0.0
   Alanine: 0.0
@@ -3115,7 +3408,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.0
@@ -3169,6 +3462,7 @@
   Stigmasterol: 0.0
   Sucrose: 0.0
   Sugars, Total: 0.0
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0
@@ -3215,140 +3509,6 @@
   Vitamin K: 0.0
   Vitamin A: 0.0
 ##############################################
-- Name: Sesame seeds
-  25-hydroxycholecalciferol: 0.0
-  Alanine: 0.0
-  Alcohol, ethyl: 0.0
-  Arginine: 0.0
-  Ash: 0.0
-  Aspartic acid: 0.0
-  Beta-sitostanol: 0.0
-  Beta-sitosterol: 0.0
-  Betaine: 0.0
-  Vitamin B-7, Biotin: 0.0
-  Brassicasterol: 0.0
-  Caffeine: 0.0
-  Calcium: 60.0
-  Campestanol: 0.0
-  Campesterol: 0.0
-  Total carbs: 11.73
-  Carbohydrate, by summation: 0.0
-  Carotene, alpha: 0.0
-  Carotene, beta: 40.0
-  Cholesterol: 0.0
-  Choline, free: 0.0
-  Choline, from glycerophosphocholine: 0.0
-  Choline, from phosphocholine: 0.0
-  Choline, from phosphotidyl choline: 0.0
-  Choline, from sphingomyelin: 0.0
-  Choline, total: 25.6
-  Copper: 1.4
-  Cryptoxanthin, alpha: 0.0
-  Cryptoxanthin, beta: 0.0
-  Cysteine: 0.0
-  Cystine: 0.0
-  Delta-5-avenasterol: 0.0
-  Delta-7-Stigmastenol: 0.0
-  Energy: nan
-  Energy (Atwater General Factors): 0.0
-  Energy (Atwater Specific Factors): 0.0
-  Fatty acids, total monounsaturated: 23.924
-  Fatty acids, total polyunsaturated: 25.491
-  Sat. fat: 9.055
-  Trans. fat: 0.0
-  Fatty acids, total trans-monoenoic: 0.0
-  Fatty acids, total trans-polyenoic: 0.0
-  Fiber: 11.6
-  Fluoride: 0.0
-  Folate, DFE: 115.0
-  Folate, food: 115.0
-  Vitamin B-9, Folate: 115.0
-  Folic acid: 0.0
-  Fructose: 0.0
-  Galactose: 0.0
-  Glucose: 0.0
-  Glutamic acid: 0.0
-  Glycine: 0.0
-  Histidine: 0.0
-  Hydroxyproline: 0.0
-  Iodine: 0.0
-  Iron: 6.36
-  Isoleucine: 0.0
-  Lactose: 0.0
-  Leucine: 0.0
-  Lutein: 0.0
-  Lutein + zeaxanthin: 0.0
-  Lycopene: 0.0
-  Lysine: 0.0
-  Magnesium: 345.0
-  Maltose: 0.0
-  Manganese: 0.0
-  Methionine: 0.0
-  Vitamin B-3, Niacin: 5.8
-  Nitrogen: 0.0
-  Vitamin B-5, Pantothenic Acid: 0.0
-  Phenylalanine: 0.0
-  Phosphorus: 667.0
-  Phytosterols: 0.0
-  Potassium: 370.0
-  Proline: 0.0
-  Protein: 20.45
-  Retinol: 0.0
-  Vitamin B-2, Riboflavin: 0.09
-  Selenium: 34.4
-  Serine: 0.0
-  Sodium: 47.0
-  Starch: 0.0
-  Stigmastadiene: 0.0
-  Stigmasterol: 0.0
-  Sucrose: 0.0
-  Sugars, Total: 0.0
-  Added Sugar: 0.0
-  Theobromine: 0.0
-  Vitamin B-1, Thiamin: 0.699
-  Threonine: 0.0
-  Tocopherol, beta: 0.0
-  Tocopherol, delta: 0.0
-  Tocopherol, gamma: 0.0
-  Tocotrienol, alpha: 0.0
-  Tocotrienol, beta: 0.0
-  Tocotrienol, delta: 0.0
-  Tocotrienol, gamma: 0.0
-  Total Sugar: 0.48
-  Total dietary fiber (AOAC 2011.25): 0.0
-  Total fat (NLEA): 0.0
-  Total fat: 61.21
-  Total sugar alcohols: 0.0
-  Tryptophan: 0.0
-  Tyrosine: 0.0
-  Valine: 0.0
-  Vitamin A, IU: 0.0
-  Vitamin A, RAE: 3.0
-  Vitamin B-12, Cobalamin: 0.0
-  Vitamin B-12, added: 0.0
-  Vitamin B-6: 0.4
-  Vitamin C: 0.0
-  Vitamin D (D2 + D3): 0.0
-  Vitamin D (D2 + D3), International Units: 0.0
-  Vitamin D2: 0.0
-  Vitamin D3: 0.0
-  Vitamin E: 1.68
-  Vitamin E, added: 0.0
-  Vitamin K (Dihydrophylloquinone): 0.0
-  Vitamin K (Menaquinone-4): 0.0
-  Vitamin K (phylloquinone): 0.0
-  Water: 3.75
-  Zeaxanthin: 0.0
-  Zinc: 6.73
-  cis-Lutein/Zeaxanthin: 0.0
-  cis-Lycopene: 0.0
-  cis-beta-Carotene: 0.0
-  trans-Lycopene: 0.0
-  trans-beta-Carotene: 0.0
-  Weight: 100
-  Vitamin K: 0.0
-  Vitamin A: 0.0
-##############################################
 - Name: Squash, winter, butternut, raw
   25-hydroxycholecalciferol: 0.0
   Alanine: 0.042
@@ -3383,7 +3543,7 @@
   Cystine: 0.009
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.007
@@ -3436,7 +3596,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.22
-  Sugars, Total: 0.0
+  Sugars, Total: 2.2
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.1
@@ -3517,7 +3678,7 @@
   Cystine: 0.0
   Delta-5-avenasterol: 0.0
   Delta-7-Stigmastenol: 0.0
-  Energy: nan
+  Energy: 0.0
   Energy (Atwater General Factors): 0.0
   Energy (Atwater Specific Factors): 0.0
   Fatty acids, total monounsaturated: 0.0
@@ -3570,7 +3731,8 @@
   Stigmastadiene: 0.0
   Stigmasterol: 0.0
   Sucrose: 0.0
-  Sugars, Total: 0.0
+  Sugars, Total: 3.64
+  Sugars, Total NLEA: 0.0
   Added Sugar: 0.0
   Theobromine: 0.0
   Vitamin B-1, Thiamin: 0.0

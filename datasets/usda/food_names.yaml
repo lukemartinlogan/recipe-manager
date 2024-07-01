@@ -1,48 +1,51 @@
-{
-    # Other
-    "almond_milk": 2257045,
-    "chobani_greek_yogurt_strawberry": 2652618,
-    "body_fortress": 2405921,
+# Other
+almond_milk: 2257045
+chobani_greek_yogurt_strawberry: 2652618
+body_fortress: 2405921
 
-    # Meats
-    "chicken_breast":  577591,
-    "wild_salmon": 2684440,
-    "farm_salmon": 2684441,
-    "farm_shrimp": 2684443,
-    "egg": 748967,
-    "unsalted_butter": 789828,
+# Meats
+chicken_breast:  577591
+rotisserie_chicken: 1098453
+wild_salmon: 2684440
+farm_salmon: 2684441
+farm_shrimp: 2684443
+egg: 748967
+unsalted_butter: 789828
 
-    # Nuts
-    "peanuts": 2515376,
-    "sesame_seeds": 2343061,
+# Nuts
+peanuts: 2515376
+sesame_seeds: 2343061
 
-    # Oats
-    "honey_granola_kind": 2612501,
-    # "almond_butter_granola_kind": 2585643,
+# Oats
+honey_granola_kind: 2612501
 
-    # Vegetables
-    "spaghetti_squash": 75233220,
-    "winter_butternut_squash": 169295,
-    "broccoli": 170379,
-    "babby_carrots": 168568,
-    "cucumber": 75111000,
-    "red_bell_pepper": 2258590,
-    "red_onion": 790577,
-    "white_onion": 1104962,
-    "yellow_onion": 790646,
-    "green_beans_del_monte_canned": 1737592,
-    "beets_del_monte_canned": 382247,
+# Vegetables
+spaghetti_squash: 75233220
+winter_butternut_squash: 169295
+broccoli: 170379
+babby_carrots: 168568
+cucumber: 75111000
+red_onion: 790577
+white_onion: 1104962
+yellow_onion: 790646
+green_beans_del_monte_canned: 1737592
+beets_del_monte_canned: 382247
 
-    # Fruits
-    "mango": 169910,
-    "red_unseeded_grapes": 2346412,
-    "cherry": 171719,
-    "blueberry": 171711,
-    "pear": 2344749,
+# Peppers
+red_bell_pepper: 2258590
+green_bell_pepper: 2258588
+yellow_bell_pepper: 2258589
+orange_bell_pepper: 2258591
 
-    # Beans
-    "pinto_beans_bush": 50102100,
+# Fruits
+mango: 169910
+red_unseeded_grapes: 2346412
+cherry: 171719
+blueberry: 171711
+pear: 2344749
 
-    # Oils
-    "peanut_oil": 1750348
-}
+# Beans
+pinto_beans_bush: 50102100
+
+# Oils
+peanut_oil: 1750348

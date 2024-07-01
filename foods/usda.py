@@ -3,15 +3,72 @@ import sys
 import yaml
 import pandas as pd
 from foods.meal_plan import MealPlan, FOOD_ROOT
+import requests
+import zipfile
+import os
+
+
+class UsdaDownload:
+    def __init__(self):
+        pass
+
+    def download(self):
+        urls = {
+            'foundation': 'https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_csv_2024-04-18.zip',
+            'legacy': 'https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip',
+            'survey': 'https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_survey_food_csv_2022-10-28.zip',
+            'branded': 'https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_csv_2024-04-18.zip',
+        }
+        # Download
+        for name, url in urls.items():
+            print(f'Downloading {name}')
+            response = requests.get(url)
+            if response.status_code == 200:
+                zip_path = f'{FOOD_ROOT}/datasets/large/{url.split("/")[-1]}'
+                with open(zip_path, 'wb') as f:
+                    f.write(response.content)
+            else:
+                print(f'Failed to download {url}')
+        # Unzip the files
+        for name, url in urls.items():
+            print(f'Unzipping {name}')
+            zip_path = f'{FOOD_ROOT}/datasets/large/{url.split("/")[-1]}'
+            extract_path = f'{FOOD_ROOT}/datasets/large'
+            os.makedirs(extract_path, exist_ok=True)
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_path)
+            unzip_name = url.split("/")[-1].replace('.zip', '')
+            os.rename(f'{extract_path}/{unzip_name}', f'{extract_path}/{name}')
+        # Delete the zip files
+        for name, url in urls.items():
+            print(f'Removing {name}.zip')
+            zip_path = f'{FOOD_ROOT}/datasets/large/{url.split("/")[-1]}'
+            os.remove(zip_path)
 
 
 class UsdaCsvToParquet:
+    def __init__(self):
+        self.usda_path = f'{FOOD_ROOT}/datasets/large/'
 
-    def __init__(self, usda_path, food_conv_path):
-        self.usda_path = usda_path
-        self.food_conv_path = food_conv_path
-        self.usda_path = self.usda_path.replace('\\', '/')
-        self.food_conv_path = self.food_conv_path.replace('\\', '/')
+    def load(self, name, food_id_dfs, nutrient_id_dfs, nutrient_dfs):
+        print(f'Loading the food CSV for {name}')
+        # fdc_id, description
+        food_id_df = pd.read_csv(f'{self.usda_path}/{name}/food.csv')
+        food_id_df = food_id_df[['fdc_id', 'description']]
+        print('Loading the nutrient ID csv')
+        # nutrient_id, unit_name, nutrient
+        nutrient_id_df = pd.read_csv(f'{self.usda_path}/{name}/nutrient.csv')
+        nutrient_id_df.rename(columns={'id': 'nutrient_id', 'name': 'nutrient'}, inplace=True)
+        nutrient_id_df = nutrient_id_df[['nutrient_id', 'unit_name', 'nutrient']]
+        print('Loading the nutrient dataset')
+        # fdc_id, nutrient_id, amount, percent_daily_value
+        nutrient_df = pd.read_csv(f'{self.usda_path}/{name}/food_nutrient.csv')
+        nutrient_df = nutrient_df[['fdc_id', 'nutrient_id', 'amount']]
+        # Register the dataframes
+        food_id_dfs.append(food_id_df)
+        nutrient_id_dfs.append(nutrient_id_df)
+        nutrient_dfs.append(nutrient_df)
+
 
     def convert(self):
         """
@@ -19,55 +76,56 @@ class UsdaCsvToParquet:
 
         :return: A CSV with the columns fdc_id, description, nutrient, unit_name, amount, percent_daily_value
         """
-        print('Food CSV')
-        # fdc_id, description
-        food_id_df = pd.read_csv(f'{self.usda_path}/food.csv')
-        food_id_df = food_id_df[['fdc_id', 'description']]
-        print('NUTRIENT ID CSV')
-        # nutrient_id, unit_name, nutrient
-        nutrient_id_df = pd.read_csv(f'{self.usda_path}/nutrient.csv')
-        nutrient_id_df.rename(columns={'id': 'nutrient_id', 'name': 'nutrient'}, inplace=True)
-        nutrient_id_df = nutrient_id_df[['nutrient_id', 'unit_name', 'nutrient']]
-        print('NUTRIENT CSV')
-        # fdc_id, nutrient_id, amount, percent_daily_value
-        nutrient_df = pd.read_csv(f'{self.usda_path}/food_nutrient.csv')
-        nutrient_df = nutrient_df[['fdc_id', 'nutrient_id', 'amount', 'percent_daily_value']]
+        # Load dataframes
+        food_id_dfs = []
+        nutrient_id_dfs = []
+        nutrient_dfs = []
+        self.load('foundation', food_id_dfs, nutrient_id_dfs, nutrient_dfs)
+        self.load('legacy', food_id_dfs, nutrient_id_dfs, nutrient_dfs)
+        self.load('survey', food_id_dfs, nutrient_id_dfs, nutrient_dfs)
+        self.load('branded', food_id_dfs, nutrient_id_dfs, nutrient_dfs)
 
-        # Join the dataframes
-        print('Joining dataframes')
-        food_df = food_id_df.merge(nutrient_df, on='fdc_id')
-        food_df = food_df.merge(nutrient_id_df, on='nutrient_id')
-        food_df = food_df.drop(columns=['nutrient_id'])
+        # Concatenate the dfs
+        print('Concatenating the dataframes')
+        food_id_df = pd.concat(food_id_dfs)
+        nutrient_id_df = pd.concat(nutrient_id_dfs)
+        nutrient_df = pd.concat(nutrient_dfs)
 
         # Save to parquet
-        # fdc_id, nutrient, unit_name, amount, percent_daily_value
-        print(f'Saving to {self.food_conv_path}')
-        food_df.to_parquet(self.food_conv_path, index=False)
+        print(f'Saving to {self.usda_path}')
+        food_id_df.to_parquet(f'{self.usda_path}/food_id.parquet', index=False)
+        nutrient_id_df.to_parquet(f'{self.usda_path}/nutrient_id.parquet', index=False)
+        nutrient_df.to_parquet(f'{self.usda_path}/nutrients.parquet', index=False)
 
 
 class UsdaParquetSubset:
-    def __init__(self, food_conv_path):
-        self.food_conv_path = food_conv_path
-        self.food_conv_path = self.food_conv_path.replace('\\', '/')
+    def __init__(self):
+        self.usda_path = f'{FOOD_ROOT}/datasets/large/'
 
     def subset(self):
-        print(self.food_conv_path)
-        food_comp = pd.read_parquet(self.food_conv_path)
+        food_id_df = pd.read_parquet(f'{self.usda_path}/food_id.parquet')
+        nutrient_id_df = pd.read_parquet(f'{self.usda_path}/nutrient_id.parquet')
+        nutrient_df = pd.read_parquet(f'{self.usda_path}/nutrients.parquet')
 
+        # Locate the chosen foods
         print('Subsetting data')
-        # Other
         with open(f'{FOOD_ROOT}/datasets/usda/food_names.yaml') as f:
             food_names = yaml.safe_load(f)
-
-        dfs = []
+        nutrient_sub_dfs = []
         for key, value in food_names.items():
-            dfs.append(food_comp[food_comp.fdc_id == value])
-        dfs = pd.concat(dfs)
+            subset = nutrient_df[nutrient_df.fdc_id == value]
+            if len(subset) == 0:
+                print(f'No data for {key}')
+            nutrient_sub_dfs.append(subset)
+        nutrient_sub_df = pd.concat(nutrient_sub_dfs)
 
-        # Make a dict is a list of the
+        # Merge with the semantic name tables
+        food_df = food_id_df.merge(nutrient_sub_df, on='fdc_id')
+        food_df = food_df.merge(nutrient_id_df, on='nutrient_id')
+        food_df = food_df.drop(columns=['nutrient_id'])
 
         print('Saving to food_comp.parquet')
-        dfs.to_parquet(f'{FOOD_ROOT}/datasets/usda/food_comp.parquet', index=False)
+        food_df.to_parquet(f'{FOOD_ROOT}/datasets/usda/food_comp.parquet', index=False)
 
 
 class UsdaSubsetToYaml:
@@ -159,7 +217,7 @@ class UsdaSubsetToYaml:
 
         # Energy
         self.nmap['Energy'] = self.nmap[['Energy (Atwater General Factors)',
-                                         'Energy (Atwater Specific Factors)']].max()
+                                         'Energy (Atwater Specific Factors)']].max(axis=1)
 
         # Vitamin K
         self.nmap['Vitamin K'] = self.nmap[
