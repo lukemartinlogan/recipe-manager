@@ -3,6 +3,9 @@ from foods.meal_plan import MealPlan
 
 plan = MealPlan(2000)
 
+plan.Ingest('Egg')
+
+
 # Protein Drink
 # plan.ingest('Almond Milk Unsweetened', 334)
 # plan.ingest('Protein Powder, Vanilla, Body Fortress', 44)

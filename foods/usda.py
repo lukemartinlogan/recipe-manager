@@ -1,9 +1,76 @@
+import json
+import sys
+import yaml
 import pandas as pd
 from foods.meal_plan import MealPlan, FOOD_ROOT
-import yaml
 
 
-class UsdaToYaml:
+class UsdaCsvToParquet:
+
+    def __init__(self, usda_path, food_conv_path):
+        self.usda_path = usda_path
+        self.food_conv_path = food_conv_path
+        self.usda_path = self.usda_path.replace('\\', '/')
+        self.food_conv_path = self.food_conv_path.replace('\\', '/')
+
+    def convert(self):
+        """
+        Convert the USDA data to a parquet file with only relevant info
+
+        :return: A CSV with the columns fdc_id, description, nutrient, unit_name, amount, percent_daily_value
+        """
+        print('Food CSV')
+        # fdc_id, description
+        food_id_df = pd.read_csv(f'{self.usda_path}/food.csv')
+        food_id_df = food_id_df[['fdc_id', 'description']]
+        print('NUTRIENT ID CSV')
+        # nutrient_id, unit_name, nutrient
+        nutrient_id_df = pd.read_csv(f'{self.usda_path}/nutrient.csv')
+        nutrient_id_df.rename(columns={'id': 'nutrient_id', 'name': 'nutrient'}, inplace=True)
+        nutrient_id_df = nutrient_id_df[['nutrient_id', 'unit_name', 'nutrient']]
+        print('NUTRIENT CSV')
+        # fdc_id, nutrient_id, amount, percent_daily_value
+        nutrient_df = pd.read_csv(f'{self.usda_path}/food_nutrient.csv')
+        nutrient_df = nutrient_df[['fdc_id', 'nutrient_id', 'amount', 'percent_daily_value']]
+
+        # Join the dataframes
+        print('Joining dataframes')
+        food_df = food_id_df.merge(nutrient_df, on='fdc_id')
+        food_df = food_df.merge(nutrient_id_df, on='nutrient_id')
+        food_df = food_df.drop(columns=['nutrient_id'])
+
+        # Save to parquet
+        # fdc_id, nutrient, unit_name, amount, percent_daily_value
+        print(f'Saving to {self.food_conv_path}')
+        food_df.to_parquet(self.food_conv_path, index=False)
+
+
+class UsdaParquetSubset:
+    def __init__(self, food_conv_path):
+        self.food_conv_path = food_conv_path
+        self.food_conv_path = self.food_conv_path.replace('\\', '/')
+
+    def subset(self):
+        print(self.food_conv_path)
+        food_comp = pd.read_parquet(self.food_conv_path)
+
+        print('Subsetting data')
+        # Other
+        with open(f'{FOOD_ROOT}/datasets/usda/food_names.yaml') as f:
+            food_names = yaml.safe_load(f)
+
+        dfs = []
+        for key, value in food_names.items():
+            dfs.append(food_comp[food_comp.fdc_id == value])
+        dfs = pd.concat(dfs)
+
+        # Make a dict is a list of the
+
+        print('Saving to food_comp.parquet')
+        dfs.to_parquet(f'{FOOD_ROOT}/datasets/usda/food_comp.parquet', index=False)
+
+
+class UsdaSubsetToYaml:
     def __init__(self):
         df_path = f'{FOOD_ROOT}/datasets/usda/food_comp.parquet'
         self.df = pd.read_parquet(df_path)
@@ -175,9 +242,3 @@ class UsdaToYaml:
         new_df_path = f'{FOOD_ROOT}/datasets/usda/food_comp.yaml'
         with open(new_df_path, 'w') as f:
             f.write('\n'.join(lines))
-
-
-
-
-conv = UsdaToYaml()
-conv.convert()
