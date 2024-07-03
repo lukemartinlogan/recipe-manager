@@ -1,4 +1,4 @@
-from foods.usda import UsdaCsvToParquet, UsdaParquetSubset, UsdaSubsetToYaml, UsdaDownload
+from foods.usda import UsdaCsvToParquet, UsdaParquetSubset, UsdaSubsetToYaml, UsdaBigDownload, UsdaSmallDownload
 from foods.meal_plan import MealPlan, FOOD_ROOT
 from jarvis_util import *
 
@@ -19,6 +19,14 @@ class FoodArgs(ArgParse):
         self.add_cmd('usda subset',
                      msg='Convert the USDA parquet to a subset'
                          'defined in datasets/usda/food_names.yaml')
+        self.add_args([
+            {
+                'name': 'full',
+                'msg': 'Download, normalize, and reindex',
+                'type': bool,
+                'default': False
+            }
+        ])
 
         # usda normalize
         self.add_cmd('usda normalize',
@@ -32,7 +40,7 @@ class FoodArgs(ArgParse):
                      msg=['Get the name of all foods in the manual and usda subsets'])
 
     def usda_download(self):
-        download = UsdaDownload()
+        download = UsdaBigDownload()
         download.download()
 
     def usda_combine(self):
@@ -40,8 +48,12 @@ class FoodArgs(ArgParse):
         conv.convert()
 
     def usda_subset(self):
-        sub = UsdaParquetSubset()
+        # sub = UsdaParquetSubset()
+        sub = UsdaSmallDownload()
         sub.subset()
+        if self.kwargs['full']:
+            self.usda_normalize()
+            self.make_index()
 
     def usda_normalize(self):
         norm = UsdaSubsetToYaml()

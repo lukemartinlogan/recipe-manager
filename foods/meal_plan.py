@@ -2,6 +2,7 @@ import pandas as pd
 import yaml
 import math
 import pathlib
+import datetime
 
 
 FOOD_ROOT = str(pathlib.Path(__file__).absolute().parent.parent).replace('\\', '/')
@@ -37,6 +38,7 @@ class MealPlan:
         self.nutrient_names.sort()
         self.nutrient_amts = {n: 0 for n in self.nutrient_names}
         self.nutrient_dvs = {n: 0 for n in self.nutrient_names}
+        self.components = {}
 
     def ingest(self, food_name, grams):
         food = self.food_comp[self.food_comp.Name == food_name]
@@ -48,11 +50,35 @@ class MealPlan:
             if math.isnan(amt):
                 amt = 0
             amt *= weight_amp
+            food.loc[:,n] = amt
             self.nutrient_amts[n] += amt
             if n in self.food_dv and self.food_dv[n]['amt'] > 0:
-                self.nutrient_dvs[n] += (amt / self.food_dv[n]['amt']) * dv_amp
+                self.nutrient_dvs[n] += (amt / self.food_dv[n]['amt']) / dv_amp
+        if food_name not in self.components:
+            self.components[food_name] = food
+        else:
+            self.components[food_name] += food
 
-    def report(self):
+    def report(self, date=None):
+        # DV / 2000
+        lines = []
         for n in self.nutrient_names:
             unit = self.food_dv[n]['unit']
-            print(f'{n}: {round(self.nutrient_amts[n], 2)}{unit}, {round(100 * self.nutrient_dvs[n], 2)}% DV')
+            dv_amp = (self.cals / 2000)
+            lines.append(f'{n}: {round(self.nutrient_amts[n], 2)}{unit}, {round(100 * self.nutrient_dvs[n], 2)}% DV')
+            sum = 0
+            for component in self.components:
+                amt = self.components[component][n].sum()
+                if amt > 0:
+                    frac = 100 * amt / self.food_dv[n]['amt'] / dv_amp
+                    if frac > 5:
+                        lines.append(f'  {component}: {round(frac, 2)}%')
+                        sum += frac
+            lines.append(f'  (viewed total): {round(sum, 2)}%')
+
+        print('\n'.join(lines))
+        if date is not None:
+            if date == 'today':
+                date = datetime.datetime.now().strftime('%Y-%m-%d')
+            with open(f'{FOOD_ROOT}/datasets/reports/{date}.txt', 'w') as f:
+                f.write('\n'.join(lines))

@@ -6,9 +6,11 @@ from foods.meal_plan import MealPlan, FOOD_ROOT
 import requests
 import zipfile
 import os
+import urllib.parse
 
 
-class UsdaDownload:
+
+class UsdaBigDownload:
     def __init__(self):
         pass
 
@@ -58,7 +60,10 @@ class UsdaCsvToParquet:
         print('Loading the nutrient ID csv')
         # nutrient_id, unit_name, nutrient
         nutrient_id_df = pd.read_csv(f'{self.usda_path}/{name}/nutrient.csv')
-        nutrient_id_df.rename(columns={'id': 'nutrient_id', 'name': 'nutrient'}, inplace=True)
+        if name == 'survey':
+            nutrient_id_df.rename(columns={'nutrient_nbr': 'nutrient_id', 'name': 'nutrient'}, inplace=True)
+        else:
+            nutrient_id_df.rename(columns={'id': 'nutrient_id', 'name': 'nutrient'}, inplace=True)
         nutrient_id_df = nutrient_id_df[['nutrient_id', 'unit_name', 'nutrient']]
         print('Loading the nutrient dataset')
         # fdc_id, nutrient_id, amount, percent_daily_value
@@ -90,6 +95,7 @@ class UsdaCsvToParquet:
         food_id_df = pd.concat(food_id_dfs)
         nutrient_id_df = pd.concat(nutrient_id_dfs)
         nutrient_df = pd.concat(nutrient_dfs)
+        nutrient_df.drop_duplicates(inplace=True)
 
         # Save to parquet
         print(f'Saving to {self.usda_path}')
@@ -112,21 +118,97 @@ class UsdaParquetSubset:
         with open(f'{FOOD_ROOT}/datasets/usda/food_names.yaml') as f:
             food_names = yaml.safe_load(f)
         nutrient_sub_dfs = []
-        for key, value in food_names.items():
-            subset = nutrient_df[nutrient_df.fdc_id == value]
+        for name, fdc_id in food_names.items():
+            subset = nutrient_df[nutrient_df.fdc_id == fdc_id]
             if len(subset) == 0:
-                print(f'No data for {key}')
+                print(f'No data for {name}')
             nutrient_sub_dfs.append(subset)
         nutrient_sub_df = pd.concat(nutrient_sub_dfs)
+        nutrient_sub_df.nutrient_id = nutrient_sub_df.nutrient_id.astype(float)
 
         # Merge with the semantic name tables
-        food_df = food_id_df.merge(nutrient_sub_df, on='fdc_id')
+        food_df = nutrient_sub_df.merge(food_id_df, on='fdc_id')
         food_df = food_df.merge(nutrient_id_df, on='nutrient_id')
         food_df = food_df.drop(columns=['nutrient_id'])
+        food_df.drop_duplicates(inplace=True)
 
         print('Saving to food_comp.parquet')
         food_df.to_parquet(f'{FOOD_ROOT}/datasets/usda/food_comp.parquet', index=False)
 
+
+class UsdaSmallDownload:
+    def __init__(self):
+        self.usda_path = f'{FOOD_ROOT}/datasets/large/'
+        self.api_key = 'EkYDoeP2gdMW2lgSPghpBXbRol3e5ZLHy0LfGEdo'
+
+    @staticmethod
+    def divide_into_batches(input_list, batch_size=25):
+        # Use a list comprehension to create batches
+        batches = [input_list[i:i + batch_size] for i in range(0, len(input_list), batch_size)]
+        return batches
+
+    def subset(self):
+        print('Subsetting data')
+        with open(f'{FOOD_ROOT}/datasets/usda/food_names.yaml') as f:
+            food_names = yaml.safe_load(f)
+
+        # Don't redownload cached foods
+        subset_path = f'{FOOD_ROOT}/datasets/usda/food_comp.parquet'
+        try:
+            subset_df = pd.read_parquet(subset_path)
+            cached_fdc_ids = set(subset_df['fdc_id'])
+            food_names = {name: fdc_id for name, fdc_id in food_names.items() if fdc_id not in cached_fdc_ids}
+        except:
+            subset_df = pd.DataFrame()
+
+        print('Downloading from usda')
+        batched_food_df = self.download_usda(food_names, mode='abridged')
+        missing = self.find_missing(batched_food_df, food_names)
+        fixed_food_df = self.download_usda(missing, mode='full')
+
+        # Identify missing foods
+        food_df = pd.concat([subset_df, fixed_food_df, batched_food_df])
+        missing = self.find_missing(food_df, food_names)
+        for name, fdc_id in missing.items():
+            print(f'No data for {name}: {fdc_id}')
+
+        # Save to parquet
+        print('Saving to food_comp.parquet')
+        food_df.to_parquet(f'{FOOD_ROOT}/datasets/usda/food_comp.parquet', index=False)
+
+    def download_usda(self, food_names, mode='abridged'):
+        # Download the chosen foods using batched REST
+        fdc_id_batches = self.divide_into_batches(list(food_names.values()))
+        food_info_set = []
+        for fdc_ids in fdc_id_batches:
+            fdc_id_list = [f'{fdc_id}' for fdc_id in fdc_ids]
+            fdc_id_str = ','.join(fdc_id_list)
+            url = f'https://api.nal.usda.gov/fdc/v1/foods?fdcIds={fdc_id_str}&format={mode}&api_key={self.api_key}'
+            response = requests.get(url)
+            if response.status_code != 200:
+                print(f'Failed to download food data')
+            batch_dict = yaml.safe_load(response.content)
+            for food_data in batch_dict:
+                for nutrient_info in food_data['foodNutrients']:
+                    if mode == 'full':
+                        nutrient_info = nutrient_info['nutrient']
+                    food_dict = {
+                        'fdc_id': food_data['fdcId'],
+                        'description': str(food_data['description']),
+                        'nutrient': str(nutrient_info['name']),
+                        'unit_name': str(nutrient_info['unitName']),
+                        'amount': float(nutrient_info['amount']) if 'amount' in nutrient_info else 0,
+                    }
+                    food_info_set.append(food_dict)
+        food_df = pd.DataFrame(food_info_set)
+        return food_df
+
+    def find_missing(self, food_df, food_names):
+        if len(food_df) == 0:
+            return food_names
+        fdc_id_sub = set(food_df['fdc_id'])
+        return {name: fdc_id for name, fdc_id in food_names.items()
+                if fdc_id not in fdc_id_sub}
 
 class UsdaSubsetToYaml:
     def __init__(self):
@@ -142,24 +224,28 @@ class UsdaSubsetToYaml:
         self.normalize_units()
         self.save()
 
-    @staticmethod
-    def normalize_unit_names(x):
-        if x == 'kJ':
-            return x
-        elif 'IU' == x:
-            return x
-        elif 'KCAL' == x:
-            return 'kCal'
-        else:
-            return x.lower()
-
     def nutrient_map(self):
         # Make a pandas pivot table that turns the values of column 'nutrients' into columns
         self.df = self.df.drop_duplicates(['fdc_id', 'nutrient'])
+        self.df = self.df.apply(lambda x: self.normalize_unit_names(x), axis=1)
         self.nmap = self.df.pivot_table(index=['description'],
                                         columns='nutrient',
                                         values='amount')  # 'description', 'unit_name', 'percent_daily_value'
         self.nmap = self.nmap.fillna(0)
+
+    @staticmethod
+    def normalize_unit_names(x):
+        x = dict(x)
+        if x['unit_name'] == 'kJ':
+            x['amount'] /= 4.184
+            x['unit_name'] = 'KCAL'
+        if 'IU' == x['unit_name']:
+            return
+        elif 'kcal' == x['unit_name'].lower():
+            x['unit_name'] = 'kCal'
+        else:
+            x['unit_name'] = x['unit_name'].lower()
+        return pd.Series(x)
 
     def fix_columns(self):
         columns = {
@@ -216,18 +302,20 @@ class UsdaSubsetToYaml:
         self.nmap['Weight'] = 100
 
         # Energy
-        self.nmap['Energy'] = self.nmap[['Energy (Atwater General Factors)',
+        self.nmap['Energy'] = self.nmap[['Energy',
+                                         'Energy (Atwater General Factors)',
                                          'Energy (Atwater Specific Factors)']].max(axis=1)
 
         # Vitamin K
-        self.nmap['Vitamin K'] = self.nmap[
-            ['Vitamin K (phylloquinone)',
-             'Vitamin K (Dihydrophylloquinone)',
-             'Vitamin K (Menaquinone-4)']].sum(axis=1)
+        # self.nmap['Vitamin K'] = self.nmap[
+        #     ['Vitamin K (phylloquinone)',
+        #      'Vitamin K (Dihydrophylloquinone)',
+        #      'Vitamin K (Menaquinone-4)']].sum(axis=1)
+        self.nmap['Vitamin K'] = self.nmap['Vitamin K (phylloquinone)']
 
         # Vitamin A, IU
         # ug = .3*IU
-        self.nmap['Vitamin A'] = self.nmap['Vitamin A, IU'] * .3
+        # self.nmap['Vitamin A'] = self.nmap['Vitamin A, IU'] * .3
 
         self.nmap.apply(lambda x: self.missing_values(x))
 
@@ -248,18 +336,17 @@ class UsdaSubsetToYaml:
 
     def normalize_units(self):
         # Describe units
-        self.df['unit_name'] = self.df['unit_name'].apply(lambda x: self.normalize_unit_names(x))
         self.unit_map = self.df[['nutrient', 'unit_name']].drop_duplicates()
         self.unit_map = self.unit_map.set_index('nutrient')
         self.unit_map = self.unit_map.to_dict()['unit_name']
         self.unit_map['Vitamin K'] = self.unit_map['Vitamin K (phylloquinone)']
-        self.unit_map['Energy'] = self.unit_map['Energy (Atwater General Factors)']
+        # self.unit_map['Energy'] = self.unit_map['Energy (Atwater General Factors)']
 
         unit_conv = {
             'g': 10**9,
             'mg': 10**6,
             'ug': 10**3,
-            'ng': 1
+            'ng': 1,
         }
 
         # Compare against DV units
