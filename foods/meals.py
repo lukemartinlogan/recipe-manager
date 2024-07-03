@@ -9,6 +9,7 @@ class PackedYogurt:
 
 class ChickenSandwhich:
     def __init__(self, plan, scale=1):
+        # Main Dish
         plan.ingest('Peppers, bell, red, raw', 28*scale)
         plan.ingest('Peppers, bell, green, raw', 21*scale)
         plan.ingest('Peppers, bell, orange, raw', 20*scale)
@@ -20,6 +21,9 @@ class ChickenSandwhich:
         plan.ingest('WHOLE WHEAT BREAD', 100*scale)
         plan.ingest('Chicken breast, rotisserie, skin not eaten', 100*scale)
 
+        # Sides
+        plan.ingest('Beets, Canned, Sliced, Del Monte', 234)
+
 
 class GarlicSpinach:
     def __init__(self, plan):
@@ -30,7 +34,13 @@ class GarlicSpinach:
 
 class CookedSpinach:
     def __init__(self, plan):
-        plan.ingest('Spinach, raw', 100)
+        """
+        Instructions:
+
+        Put raw spinach in a drainable container.
+        Pour boiling water slowly over the spinach until leafy green.
+        """
+        plan.ingest('Spinach, mature', 100)
         plan.ingest('Oil, olive, extra virgin', 5)
         plan.ingest('Garlic, raw', 5)
 
@@ -38,18 +48,21 @@ class CookedSpinach:
 class SalmonDinner:
     def __init__(self, plan, salmon='fresh'):
         """
+        Instructions:
 
-
-        :param plan:
-        :param salmon:
+        Preheat oven to 400f
+        Combine olive oil, salt, cracked black pepper, minced garlic, italian herbs, and lemon.
+        Enough should be used to coat the salmon.
         """
         if salmon == 'fresh':
-            plan.ingest('Fish, salmon, sockeye, wild caught, raw', 100)
+            plan.ingest('Fish, salmon, sockeye, wild caught, raw', 170)
         else:
-            plan.ingest('Fish, salmon, Atlantic, farm raised, raw', 100)
+            plan.ingest('Fish, salmon, Atlantic, farm raised, raw', 170)
         plan.ingest('Oil, olive, extra virgin', 4)
         plan.ingest('PINK HIMALAYAN SALT, PINK', .005)  # 5 mg
-        plan.ingest('SIGNATURE MASHED POTATOES', 125)
+        plan.ingest('Rice, brown, long grain, unenriched, raw', 125)
+
+        # plan.ingest('SIGNATURE MASHED POTATOES', 125)
         plan.ingest('Green Beans, Canned, Del Monte', 40)
         plan.ingest('Sweet Peas, Canned, Del Monte', 40)
         CookedSpinach(plan)

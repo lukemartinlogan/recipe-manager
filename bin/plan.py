@@ -5,12 +5,12 @@ from foods.meals import *
 plan = MealPlan(2200)
 
 # Breakfast
-plan.ingest('Eggs, Grade A, Large, egg whole', 50)
-PackedYogurt(plan)
-ProteinMilk(plan)
+plan.ingest('Eggs, Grade A, Large, egg whole', 25)
 
 # Snack
 plan.ingest('Mangos, raw', 100)
+PackedYogurt(plan)
+ProteinMilk(plan)
 
 # Lunch
 ChickenSandwhich(plan)
@@ -18,11 +18,9 @@ ChickenSandwhich(plan)
 # Snack
 VeggieHumus(plan)
 plan.ingest('Grapes, red, seedless, raw', 40)
-plan.ingest('SKINNY POP, POPCORN PACK', 40)
+# plan.ingest('SKINNY POP, POPCORN PACK', 40)
 
 # Dinner
-# SalmonDinner(plan)
-# TonySalmon(plan)
-SpaghettiSquash(plan)
+SalmonDinner(plan)
 
 plan.report('today')

@@ -314,8 +314,17 @@ class UsdaSubsetToYaml:
         self.nmap['Vitamin K'] = self.nmap['Vitamin K (phylloquinone)']
 
         # Vitamin A, IU
-        # ug = .3*IU
-        # self.nmap['Vitamin A'] = self.nmap['Vitamin A, IU'] * .3
+        if 'Vitamin A, IU' in self.nmap.columns:
+            self.nmap['Vitamin A, IU'] = self.nmap['Vitamin A, IU'] * .3
+        else:
+            self.nmap['Vitamin A, IU'] = 0
+        if 'Vitamin A, RAE' not in self.nmap.columns:
+            self.nmap['Vitamin A, RAE'] = 0
+        self.nmap['Vitamin A'] = self.nmap[[
+            'Vitamin A, IU',
+            'Vitamin A, RAE',
+            'Vitamin A'
+        ]].max(axis=1)
 
         self.nmap.apply(lambda x: self.missing_values(x))
 
