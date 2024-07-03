@@ -339,9 +339,14 @@ class UsdaSubsetToYaml:
         # ignoring for now
 
         # Vitamin E
+        if 'Vitamin E (alpha-tocopherol)' not in self.nmap:
+            self.nmap['Vitamin E (alpha-tocopherol)'] = 0
         # Vitamin E, added
         # Vitamin E (alpha-tocopherol)
-        # ignoring for now
+        self.nmap['Vitamin E'] = self.nmap[[
+            'Vitamin E',
+            'Vitamin E (alpha-tocopherol)',
+        ]].max(axis=1)
 
     def normalize_units(self):
         # Describe units

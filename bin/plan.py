@@ -22,5 +22,6 @@ plan.ingest('Grapes, red, seedless, raw', 40)
 
 # Dinner
 SalmonDinner(plan)
+# SpaghettiSquash(plan)
 
 plan.report('today')

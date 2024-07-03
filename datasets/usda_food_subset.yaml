@@ -37,6 +37,7 @@ mature_spinach: 1999633
 romaine_lettuce: 2346389
 tomato: 1999634
 garlic: 1104647
+asparagus: 2345287
 
 # Rice
 brown_rice: 2512380
@@ -70,6 +71,7 @@ pinto_beans_bush: 2559064
 peanut_oil: 1750348
 virgin_olive_oil: 748608
 light_olive_oil: 1750351
+veggie_oil: 2345737
 
 # Bread
 whole_wheat_bread: 2656023
