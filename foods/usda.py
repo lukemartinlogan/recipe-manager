@@ -307,11 +307,11 @@ class UsdaSubsetToYaml:
                                          'Energy (Atwater Specific Factors)']].max(axis=1)
 
         # Vitamin K
-        # self.nmap['Vitamin K'] = self.nmap[
-        #     ['Vitamin K (phylloquinone)',
-        #      'Vitamin K (Dihydrophylloquinone)',
-        #      'Vitamin K (Menaquinone-4)']].sum(axis=1)
-        self.nmap['Vitamin K'] = self.nmap['Vitamin K (phylloquinone)']
+        self.nmap['Vitamin K'] = self.nmap[
+            ['Vitamin K (phylloquinone)',
+             'Vitamin K (Dihydrophylloquinone)',
+             'Vitamin K (Menaquinone-4)']].sum(axis=1)
+        # self.nmap['Vitamin K'] = self.nmap['Vitamin K (phylloquinone)']
 
         # Vitamin A, IU
         if 'Vitamin A, IU' in self.nmap.columns:
