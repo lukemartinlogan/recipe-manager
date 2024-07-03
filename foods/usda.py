@@ -174,6 +174,7 @@ class UsdaSmallDownload:
 
         # Save to parquet
         print('Saving to food_comp.parquet')
+        os.makedirs(f'{FOOD_ROOT}/datasets/large', exist_ok=True)
         food_df.to_parquet(f'{FOOD_ROOT}/datasets/large/food_comp.parquet', index=False)
 
     def download_usda(self, food_names, mode='abridged'):

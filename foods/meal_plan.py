@@ -2,6 +2,7 @@ import pandas as pd
 import yaml
 import math
 import pathlib
+import os
 import datetime
 
 
@@ -91,5 +92,6 @@ class MealPlan:
                 date = datetime.datetime.now().strftime('%Y-%m-%d')
             # with open(f'{FOOD_ROOT}/datasets/reports/{date}.txt', 'w') as f:
             #     f.write('\n'.join(lines))
+            os.makedirs(f'{FOOD_ROOT}/datasets/reports', exist_ok=True)
             with open(f'{FOOD_ROOT}/datasets/reports/{date}.yaml', 'w') as f:
                 yaml.dump(info, f)
