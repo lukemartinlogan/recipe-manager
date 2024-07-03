@@ -115,7 +115,7 @@ class UsdaParquetSubset:
 
         # Locate the chosen foods
         print('Subsetting data')
-        with open(f'{FOOD_ROOT}/datasets/usda/food_names.yaml') as f:
+        with open(f'{FOOD_ROOT}/datasets/usda_food_subset.yaml') as f:
             food_names = yaml.safe_load(f)
         nutrient_sub_dfs = []
         for name, fdc_id in food_names.items():
@@ -133,7 +133,7 @@ class UsdaParquetSubset:
         food_df.drop_duplicates(inplace=True)
 
         print('Saving to food_comp.parquet')
-        food_df.to_parquet(f'{FOOD_ROOT}/datasets/usda/food_comp.parquet', index=False)
+        food_df.to_parquet(f'{FOOD_ROOT}/datasets/large/food_comp.parquet', index=False)
 
 
 class UsdaSmallDownload:
@@ -149,11 +149,11 @@ class UsdaSmallDownload:
 
     def subset(self):
         print('Subsetting data')
-        with open(f'{FOOD_ROOT}/datasets/usda/food_names.yaml') as f:
+        with open(f'{FOOD_ROOT}/datasets/usda_food_subset.yaml') as f:
             food_names = yaml.safe_load(f)
 
         # Don't redownload cached foods
-        subset_path = f'{FOOD_ROOT}/datasets/usda/food_comp.parquet'
+        subset_path = f'{FOOD_ROOT}/datasets/large/food_comp.parquet'
         try:
             subset_df = pd.read_parquet(subset_path)
             cached_fdc_ids = set(subset_df['fdc_id'])
@@ -174,7 +174,7 @@ class UsdaSmallDownload:
 
         # Save to parquet
         print('Saving to food_comp.parquet')
-        food_df.to_parquet(f'{FOOD_ROOT}/datasets/usda/food_comp.parquet', index=False)
+        food_df.to_parquet(f'{FOOD_ROOT}/datasets/large/food_comp.parquet', index=False)
 
     def download_usda(self, food_names, mode='abridged'):
         # Download the chosen foods using batched REST
@@ -212,7 +212,7 @@ class UsdaSmallDownload:
 
 class UsdaSubsetToYaml:
     def __init__(self):
-        df_path = f'{FOOD_ROOT}/datasets/usda/food_comp.parquet'
+        df_path = f'{FOOD_ROOT}/datasets/large/food_comp.parquet'
         self.df = pd.read_parquet(df_path)
         self.nmap = None  # Nutrient map
         self.unit_map = None  # Unit map
@@ -384,6 +384,6 @@ class UsdaSubsetToYaml:
                 if key != 'Name':
                     lines.append(f"  {key}: {value}")
 
-        new_df_path = f'{FOOD_ROOT}/datasets/usda/food_comp.yaml'
+        new_df_path = f'{FOOD_ROOT}/datasets/large/food_comp.yaml'
         with open(new_df_path, 'w') as f:
             f.write('\n'.join(lines))

@@ -18,7 +18,7 @@ class FoodArgs(ArgParse):
         # usda subset
         self.add_cmd('usda subset',
                      msg='Convert the USDA parquet to a subset'
-                         'defined in datasets/usda/food_names.yaml')
+                         'defined in datasets/usda_food_subset.yaml')
         self.add_args([
             {
                 'name': 'full',
@@ -31,7 +31,7 @@ class FoodArgs(ArgParse):
         # usda normalize
         self.add_cmd('usda normalize',
                      msg='Convert the USDA parquet to a human-readable YAML format'
-                         'defined in datasets/usda/food_comp.yaml')
+                         'defined in datasets/large/food_comp.yaml')
 
 
 
@@ -63,7 +63,7 @@ class FoodArgs(ArgParse):
         food_df = MealPlan.load_food_composition()
         names = list(food_df['Name'])
         names.sort()
-        with open(f'{FOOD_ROOT}/datasets/food_names.yaml', 'w') as f:
+        with open(f'{FOOD_ROOT}/datasets/food_index.yaml', 'w') as f:
             yaml.dump(names, f)
 
 

@@ -21,7 +21,7 @@ class MealPlan:
     @staticmethod
     def load_food_composition():
         manual = MealPlan.load_food_composition_part('manual')
-        usda = MealPlan.load_food_composition_part('usda')
+        usda = MealPlan.load_food_composition_part('large')
         return pd.concat([manual, usda], ignore_index=True)
 
     @staticmethod
@@ -50,6 +50,7 @@ class MealPlan:
             if math.isnan(amt):
                 amt = 0
             amt *= weight_amp
+            amt = float(amt)
             food.loc[:,n] = amt
             self.nutrient_amts[n] += amt
             if n in self.food_dv and self.food_dv[n]['amt'] > 0:
@@ -62,17 +63,25 @@ class MealPlan:
     def report(self, date=None):
         # DV / 2000
         lines = []
+        info = {}
         for n in self.nutrient_names:
             unit = self.food_dv[n]['unit']
             dv_amp = (self.cals / 2000)
+            info[n] = {
+                'amt': round(self.nutrient_amts[n], 2),
+                'percent_dv': round(100 * self.nutrient_dvs[n], 2),
+                'unit': unit,
+                'components': {}
+            }
             lines.append(f'{n}: {round(self.nutrient_amts[n], 2)}{unit}, {round(100 * self.nutrient_dvs[n], 2)}% DV')
             sum = 0
             for component in self.components:
-                amt = self.components[component][n].sum()
+                amt = float(self.components[component][n].sum())
                 if amt > 0:
                     frac = 100 * amt / self.food_dv[n]['amt'] / dv_amp
                     if frac > 5:
                         lines.append(f'  {component}: {round(frac, 2)}%')
+                        info[n]['components'][component] = round(frac, 2)
                         sum += frac
             lines.append(f'  (viewed total): {round(sum, 2)}%')
 
@@ -80,5 +89,7 @@ class MealPlan:
         if date is not None:
             if date == 'today':
                 date = datetime.datetime.now().strftime('%Y-%m-%d')
-            with open(f'{FOOD_ROOT}/datasets/reports/{date}.txt', 'w') as f:
-                f.write('\n'.join(lines))
+            # with open(f'{FOOD_ROOT}/datasets/reports/{date}.txt', 'w') as f:
+            #     f.write('\n'.join(lines))
+            with open(f'{FOOD_ROOT}/datasets/reports/{date}.yaml', 'w') as f:
+                yaml.dump(info, f)
