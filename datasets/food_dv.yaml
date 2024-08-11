@@ -81,9 +81,6 @@ Calcium:
 Copper: 
   amt: 1.5 
   unit: mg
-Chloride: 
-  amt: 2.3 
-  unit: g
 Iodine: 
   amt: 150
   unit: ug

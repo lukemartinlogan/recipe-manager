@@ -4,24 +4,26 @@ from foods.meals import *
 
 plan = MealPlan(2200)
 
+PorkSandwich(plan)
+
 # Breakfast
-plan.ingest('Eggs, Grade A, Large, egg whole', 25)
+# plan.ingest('Eggs, Grade A, Large, egg whole', 25)
 
 # Snack
-plan.ingest('Mangos, raw', 100)
-PackedYogurt(plan)
-ProteinMilk(plan)
+# plan.ingest('Mangos, raw', 100)
+# PackedYogurt(plan)
+# ProteinMilk(plan)
 
 # Lunch
-ChickenSandwhich(plan)
+# ChickenSandwich(plan)
 
 # Snack
-VeggieHumus(plan)
-plan.ingest('Grapes, red, seedless, raw', 40)
+# VeggieHumus(plan)
+# plan.ingest('Grapes, red, seedless, raw', 40)
 # plan.ingest('SKINNY POP, POPCORN PACK', 40)
 
 # Dinner
-SalmonDinner(plan)
+# SalmonDinner(plan)
 # SpaghettiSquash(plan)
 
 plan.report('today')
