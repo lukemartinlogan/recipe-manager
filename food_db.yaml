@@ -1,0 +1,148 @@
+# Food Database - Nutritional Information per 100g
+# Source: USDA FoodData Central
+
+chicken_breast:
+  calories: 165
+  protein: 31.0
+  fat: 3.6
+  carbs: 0.0
+  saturated_fat: 1.0
+  monounsaturated_fat: 1.2
+  trans_fat: 0.0
+  protein_type: animal
+
+asparagus:
+  calories: 20
+  protein: 2.2
+  fat: 0.12
+  carbs: 3.88
+  fiber: 2.1
+  sugar: 1.5
+  saturated_fat: 0.04
+  monounsaturated_fat: 0.01
+  trans_fat: 0.0
+  protein_type: plant
+
+blueberries:
+  calories: 57
+  protein: 0.74
+  fat: 0.33
+  carbs: 14.49
+  fiber: 2.4
+  sugar: 10.0
+  saturated_fat: 0.08
+  monounsaturated_fat: 0.05
+  trans_fat: 0.0
+  protein_type: plant
+
+sweet_potato:
+  calories: 86
+  protein: 1.57
+  fat: 0.05
+  carbs: 20.12
+  fiber: 3.0
+  sugar: 4.2
+  saturated_fat: 0.02
+  monounsaturated_fat: 0.00
+  trans_fat: 0.0
+  protein_type: plant
+
+turkey_breast_deli:
+  calories: 104
+  protein: 18.0
+  fat: 1.5
+  carbs: 3.5
+  saturated_fat: 0.5
+  monounsaturated_fat: 0.4
+  trans_fat: 0.0
+  protein_type: animal
+
+pepper_jack_cheese:
+  calories: 357
+  protein: 21.4
+  fat: 28.6
+  carbs: 3.6
+  saturated_fat: 18.0
+  monounsaturated_fat: 8.2
+  trans_fat: 0.0
+  protein_type: animal
+
+honey_roasted_peanuts:
+  calories: 550
+  protein: 23.33
+  fat: 43.33
+  carbs: 26.67
+  fiber: 3.0
+  sugar: 13.0
+  saturated_fat: 6.0
+  monounsaturated_fat: 20.6
+  trans_fat: 0.0
+  protein_type: plant
+
+skirt_steak:
+  calories: 255
+  protein: 23.51
+  fat: 17.13
+  carbs: 0.0
+  saturated_fat: 6.8
+  monounsaturated_fat: 7.4
+  trans_fat: 0.0
+  protein_type: animal
+
+pinto_beans_canned:
+  calories: 86
+  protein: 7.8
+  fat: 0.6
+  carbs: 22.7
+  fiber: 9.0
+  sugar: 0.4
+  saturated_fat: 0.2
+  monounsaturated_fat: 0.1
+  trans_fat: 0.0
+  protein_type: plant
+
+olive_oil:
+  calories: 884  # per 100g
+  protein: 0.0
+  fat: 100.0
+  carbs: 0.0
+  saturated_fat: 13.8
+  monounsaturated_fat: 73.0
+  trans_fat: 0.0
+  protein_type: none
+
+tomato:
+  calories: 18
+  protein: 0.9
+  fat: 0.2
+  carbs: 3.9
+  fiber: 1.2
+  sugar: 2.6
+  saturated_fat: 0.03
+  monounsaturated_fat: 0.03
+  trans_fat: 0.0
+  protein_type: plant
+
+onion:
+  calories: 40
+  protein: 1.1
+  fat: 0.1
+  carbs: 9.3
+  fiber: 1.7
+  sugar: 4.2
+  saturated_fat: 0.04
+  monounsaturated_fat: 0.01
+  trans_fat: 0.0
+  protein_type: plant
+
+white_bread:
+  calories: 266
+  protein: 10.7
+  fat: 3.3
+  carbs: 43.9
+  fiber: 2.4
+  sugar: 5.0
+  saturated_fat: 0.8
+  monounsaturated_fat: 0.6
+  trans_fat: 0.0
+  protein_type: plant
