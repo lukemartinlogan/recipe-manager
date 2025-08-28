@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  recipe-manager:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.local
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    volumes:
+      # Mount source code for development (hot reload if supported)
+      - ..:/app
+      - /app/node_modules
+      # Persist SQLite database
+      - recipe_data_local:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  recipe_data_local:
+    driver: local

@@ -48,6 +48,19 @@ db.serialize(() => {
     FOREIGN KEY (user_id) REFERENCES users (id),
     UNIQUE(user_id, recipe_id)
   )`);
+  
+  // Grocery list items table
+  db.run(`CREATE TABLE IF NOT EXISTS grocery_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    ingredient_name TEXT NOT NULL,
+    is_checked BOOLEAN DEFAULT 0,
+    sort_order INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    UNIQUE(user_id, ingredient_name)
+  )`);
 });
 
 // Recipe parser with variable substitution
@@ -572,41 +585,258 @@ app.get('/grocery-list', (req, res) => {
             const ingredientsList = document.getElementById('ingredientsList');
             const mealsList = document.getElementById('mealsList');
             
-            // Reload quantities from server if signed in
+            // Load meal quantities and sync grocery list
             if (${!!req.session.userId}) {
                 fetch('/api/meal-quantities')
                     .then(response => response.json())
                     .then(data => {
                         mealQuantities = data;
-                        updateGroceryDisplay();
+                        return syncGroceryList();
                     })
+                    .then(() => loadGroceryItems())
                     .catch(error => {
                         console.error('Error loading quantities:', error);
-                        updateGroceryDisplay();
+                        loadGroceryItems();
                     });
             } else {
-                // Load from localStorage for non-signed-in users
+                // Non-signed-in users don't have persistent grocery lists
+                updateGroceryDisplayForNonSignedIn();
+            }
+            
+            function syncGroceryList() {
+                // Get all ingredients from current meal quantities
+                const allIngredients = [];
+                Object.entries(mealQuantities).forEach(([recipeId, quantity]) => {
+                    if (quantity > 0) {
+                        const recipe = recipes.find(r => r.id === recipeId);
+                        if (recipe) {
+                            Object.keys(recipe.variables || {}).forEach(ingredient => {
+                                const ingredientName = ingredient.replace(/_/g, ' ');
+                                allIngredients.push(ingredientName);
+                            });
+                        }
+                    }
+                });
+                
+                // Sync with database
+                return fetch('/api/grocery-items/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ingredients: [...new Set(allIngredients)] })
+                });
+            }
+            
+            function loadGroceryItems() {
+                // Load grocery items from database with their states
+                fetch('/api/grocery-items')
+                    .then(response => response.json())
+                    .then(items => {
+                        displayGroceryItems(items);
+                        updateMealsList();
+                    })
+                    .catch(error => {
+                        console.error('Error loading grocery items:', error);
+                    });
+            }
+            
+            function displayGroceryItems(items) {
+                ingredientsList.innerHTML = items
+                    .map(item => \`
+                        <li class="grocery-item \${item.is_checked ? 'checked' : ''}" 
+                            data-ingredient="\${item.ingredient_name}">
+                            <div class="drag-handle">≡</div>
+                            <label>
+                                <input type="checkbox" class="grocery-checkbox" 
+                                       data-ingredient="\${item.ingredient_name}" 
+                                       \${item.is_checked ? 'checked' : ''}>
+                                <span class="ingredient-text">\${item.ingredient_name}</span>
+                            </label>
+                        </li>
+                    \`)
+                    .join('');
+                
+                initializeDragAndDrop();
+            }
+            
+            function initializeDragAndDrop() {
+                const groceryItems = ingredientsList.querySelectorAll('.grocery-item');
+                
+                groceryItems.forEach(item => {
+                    const dragHandle = item.querySelector('.drag-handle');
+                    
+                    dragHandle.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        startDrag(item, e);
+                    });
+                });
+            }
+            
+            let draggedElement = null;
+            let placeholder = null;
+            let isDragging = false;
+            
+            function startDrag(item, e) {
+                console.log('Starting drag for:', item.dataset.ingredient);
+                draggedElement = item;
+                isDragging = true;
+                
+                // Create placeholder
+                placeholder = document.createElement('li');
+                placeholder.className = 'drag-placeholder';
+                placeholder.innerHTML = '<div style="height: 1px; background: #007bff; margin: 10px 0;"></div>';
+                
+                // Style the dragged item
+                item.style.position = 'fixed';
+                item.style.zIndex = '1000';
+                item.style.pointerEvents = 'none';
+                item.style.transform = 'rotate(3deg)';
+                item.style.opacity = '0.8';
+                item.style.width = item.offsetWidth + 'px';
+                
+                // Insert placeholder
+                item.parentNode.insertBefore(placeholder, item.nextSibling);
+                
+                // Move item with mouse
+                updateDragPosition(e);
+                
+                // Add global mouse events
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', endDrag);
+            }
+            
+            function handleMouseMove(e) {
+                if (!isDragging || !draggedElement) return;
+                
+                updateDragPosition(e);
+                
+                // Find the closest grocery item to insert before
+                const afterElement = getDragAfterElement(ingredientsList, e.clientY);
+                if (afterElement == null) {
+                    ingredientsList.appendChild(placeholder);
+                } else {
+                    ingredientsList.insertBefore(placeholder, afterElement);
+                }
+            }
+            
+            function updateDragPosition(e) {
+                if (!draggedElement) return;
+                
+                draggedElement.style.left = (e.clientX - draggedElement.offsetWidth / 2) + 'px';
+                draggedElement.style.top = (e.clientY - 20) + 'px';
+            }
+            
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.grocery-item:not(.dragging)')];
+                
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+            
+            function endDrag(e) {
+                if (!isDragging || !draggedElement) return;
+                
+                console.log('Ending drag');
+                isDragging = false;
+                
+                // Reset dragged element styles
+                draggedElement.style.position = '';
+                draggedElement.style.zIndex = '';
+                draggedElement.style.pointerEvents = '';
+                draggedElement.style.transform = '';
+                draggedElement.style.opacity = '';
+                draggedElement.style.width = '';
+                draggedElement.style.left = '';
+                draggedElement.style.top = '';
+                
+                // Insert the item before the placeholder
+                if (placeholder.parentNode) {
+                    placeholder.parentNode.insertBefore(draggedElement, placeholder);
+                    placeholder.remove();
+                    
+                    // Update order in database
+                    updateItemOrder();
+                }
+                
+                draggedElement = null;
+                placeholder = null;
+                
+                // Remove global mouse events
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', endDrag);
+            }
+            
+            function updateItemOrder() {
+                const items = [...ingredientsList.querySelectorAll('.grocery-item')];
+                const orderedIngredients = items.map(item => item.dataset.ingredient);
+                
+                if (${!!req.session.userId}) {
+                    fetch('/api/grocery-items/reorder-all', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderedIngredients })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error('Failed to update order');
+                            loadGroceryList(); // Reload on failure
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating order:', error);
+                        loadGroceryList(); // Reload on error
+                    });
+                }
+            }
+            
+            function updateMealsList() {
+                const selectedMeals = [];
+                Object.entries(mealQuantities).forEach(([recipeId, quantity]) => {
+                    if (quantity > 0) {
+                        const recipe = recipes.find(r => r.id === recipeId);
+                        if (recipe) {
+                            selectedMeals.push({ ...recipe, quantity });
+                        }
+                    }
+                });
+                
+                mealsList.innerHTML = selectedMeals
+                    .map(meal => \`
+                        <div class="meal-tile-small">
+                            <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
+                            <div class="meal-info">
+                                <h4>\${meal.title}</h4>
+                                <span class="meal-quantity">Qty: \${meal.quantity}</span>
+                            </div>
+                        </div>
+                    \`)
+                    .join('');
+            }
+            
+            function updateGroceryDisplayForNonSignedIn() {
+                // For non-signed-in users, show simple list without persistence
+                const allIngredients = new Set();
+                const selectedMeals = [];
+                
                 try {
                     mealQuantities = JSON.parse(localStorage.getItem('mealQuantities') || '{}');
                 } catch (e) {
-                    console.error('Error loading from localStorage:', e);
                     mealQuantities = {};
                 }
-                updateGroceryDisplay();
-            }
-            
-            function updateGroceryDisplay() {
-                // Get all unique ingredients from selected meals
-                const allIngredients = new Set();
-                const selectedMeals = [];
                 
                 Object.entries(mealQuantities).forEach(([recipeId, quantity]) => {
                     if (quantity > 0) {
                         const recipe = recipes.find(r => r.id === recipeId);
                         if (recipe) {
                             selectedMeals.push({ ...recipe, quantity });
-                            
-                            // Add ingredients (just names, not quantities)
                             Object.keys(recipe.variables || {}).forEach(ingredient => {
                                 const ingredientName = ingredient.replace(/_/g, ' ');
                                 allIngredients.add(ingredientName);
@@ -615,13 +845,22 @@ app.get('/grocery-list', (req, res) => {
                     }
                 });
                 
-                // Populate ingredients list
                 ingredientsList.innerHTML = Array.from(allIngredients)
                     .sort()
-                    .map(ingredient => \`<li><label><input type="checkbox" class="grocery-checkbox"> \${ingredient}</label></li>\`)
+                    .map(ingredient => \`
+                        <li class="grocery-item" data-ingredient="\${ingredient}">
+                            <div class="drag-handle">≡</div>
+                            <label>
+                                <input type="checkbox" class="grocery-checkbox" data-ingredient="\${ingredient}">
+                                <span class="ingredient-text">\${ingredient}</span>
+                            </label>
+                        </li>
+                    \`)
                     .join('');
                 
-                // Populate meals list
+                // Initialize drag and drop for non-signed-in users too
+                initializeDragAndDrop();
+                    
                 mealsList.innerHTML = selectedMeals
                     .map(meal => \`
                         <div class="meal-tile-small">
@@ -635,6 +874,17 @@ app.get('/grocery-list', (req, res) => {
                     .join('');
             }
         }
+        
+        function toggleGroceryItem(ingredient_name, is_checked) {
+            if (${!!req.session.userId}) {
+                fetch('/api/grocery-items/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ingredient_name, is_checked })
+                }).catch(error => console.error('Error updating item:', error));
+            }
+        }
+        
         
         function markPurchased() {
             if (confirm('Mark all items as purchased and reset meal quantities?')) {
@@ -657,6 +907,24 @@ app.get('/grocery-list', (req, res) => {
                 }
             }
         }
+        
+        // Add event listener for checkbox changes
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('grocery-checkbox')) {
+                e.stopPropagation(); // Prevent interfering with drag events
+                const ingredient_name = e.target.getAttribute('data-ingredient');
+                const is_checked = e.target.checked;
+                
+                // Update visual state immediately
+                const listItem = e.target.closest('.grocery-item');
+                if (listItem) {
+                    listItem.classList.toggle('checked', is_checked);
+                }
+                
+                // Save to database
+                toggleGroceryItem(ingredient_name, is_checked);
+            }
+        });
         
         document.addEventListener('DOMContentLoaded', loadGroceryList);
     </script>
@@ -734,6 +1002,130 @@ app.post('/api/meal-quantities/reset', (req, res) => {
     }
     res.json({ success: true });
   });
+});
+
+// Grocery list API endpoints
+app.get('/api/grocery-items', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  
+  db.all(`SELECT ingredient_name, is_checked, sort_order 
+          FROM grocery_items 
+          WHERE user_id = ? 
+          ORDER BY sort_order ASC, ingredient_name ASC`, 
+    [req.session.userId], (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(rows);
+  });
+});
+
+app.post('/api/grocery-items/sync', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  
+  const { ingredients } = req.body; // Array of ingredient names from current meal quantities
+  
+  if (!ingredients || !Array.isArray(ingredients)) {
+    return res.status(400).json({ error: 'Invalid ingredients array' });
+  }
+  
+  // First, get the maximum sort_order for proper ordering of new items
+  db.get('SELECT MAX(sort_order) as max_order FROM grocery_items WHERE user_id = ?', 
+    [req.session.userId], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    
+    let nextOrder = (result?.max_order || 0) + 1;
+    
+    // Insert new ingredients that don't exist yet
+    const insertPromises = ingredients.map(ingredient => {
+      return new Promise((resolve, reject) => {
+        db.run(`INSERT OR IGNORE INTO grocery_items 
+                (user_id, ingredient_name, sort_order) 
+                VALUES (?, ?, ?)`,
+          [req.session.userId, ingredient, nextOrder++], (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+    });
+    
+    Promise.all(insertPromises)
+      .then(() => {
+        // Remove ingredients that are no longer needed (not in current meal quantities)
+        db.run(`DELETE FROM grocery_items 
+                WHERE user_id = ? AND ingredient_name NOT IN (${ingredients.map(() => '?').join(',')})`,
+          [req.session.userId, ...ingredients], (err) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Database error' });
+          }
+          res.json({ success: true });
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(500).json({ error: 'Database error' });
+      });
+  });
+});
+
+app.post('/api/grocery-items/check', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  
+  const { ingredient_name, is_checked } = req.body;
+  
+  db.run(`UPDATE grocery_items 
+          SET is_checked = ?, updated_at = CURRENT_TIMESTAMP 
+          WHERE user_id = ? AND ingredient_name = ?`,
+    [is_checked, req.session.userId, ingredient_name], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json({ success: true });
+  });
+});
+
+app.post('/api/grocery-items/reorder-all', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  
+  const { orderedIngredients } = req.body;
+  
+  if (!Array.isArray(orderedIngredients)) {
+    return res.status(400).json({ error: 'Invalid input' });
+  }
+  
+  // Update sort_order for all items based on their position in the array
+  const updates = orderedIngredients.map((ingredient_name, index) => 
+    new Promise((resolve, reject) => {
+      db.run(`UPDATE grocery_items 
+              SET sort_order = ?, updated_at = CURRENT_TIMESTAMP 
+              WHERE user_id = ? AND ingredient_name = ?`,
+        [index, req.session.userId, ingredient_name], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    })
+  );
+  
+  Promise.all(updates)
+    .then(() => res.json({ success: true }))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'Database error' });
+    });
 });
 
 app.get('/api/search/:query', (req, res) => {

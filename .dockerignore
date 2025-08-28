@@ -1,0 +1,26 @@
+# Node modules will be installed in container
+node_modules
+npm-debug.log
+
+# Git files (we're cloning fresh)
+.git
+.gitignore
+
+# Local development files
+.env.local
+.env.development
+.env.test
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Keep Docker files, but ignore some development files in docker/
+docker/*.md
+docker/ssl/
