@@ -124,6 +124,30 @@ function updateQuantityInputs() {
     });
 }
 
+// Search functionality
+function performSearch(query) {
+    const recipeGrid = document.getElementById('recipeGrid');
+    const recipeTiles = document.querySelectorAll('.recipe-tile');
+    
+    if (!query.trim()) {
+        // Show all recipes if search is empty
+        recipeTiles.forEach(tile => {
+            tile.style.display = 'block';
+        });
+        return;
+    }
+    
+    // Filter recipes based on title match
+    recipeTiles.forEach(tile => {
+        const title = tile.querySelector('.recipe-title').textContent.toLowerCase();
+        if (title.includes(query.toLowerCase())) {
+            tile.style.display = 'block';
+        } else {
+            tile.style.display = 'none';
+        }
+    });
+}
+
 // Event delegation and initialization
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded - with auth support');
@@ -171,6 +195,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    
+    // Search input handler
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            performSearch(e.target.value);
+        });
+        
+        // Clear search on Escape key
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                e.target.value = '';
+                performSearch('');
+            }
+        });
+    }
     
     // Close modal when clicking outside
     window.addEventListener('click', function(e) {
