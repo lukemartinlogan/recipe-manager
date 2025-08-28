@@ -1137,6 +1137,7 @@ app.get('/api/search/:query', (req, res) => {
   res.json(filtered);
 });
 
-app.listen(PORT, () => {
-  console.log(`Recipe server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Recipe server running on http://0.0.0.0:${PORT}`);
+  console.log(`Access from host: http://localhost:${PORT}`);
 });
