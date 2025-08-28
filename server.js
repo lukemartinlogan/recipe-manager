@@ -362,10 +362,12 @@ app.get('/', (req, res) => {
                     </div>
                     <div class="recipe-info">
                         <h3 class="recipe-title">${recipe.title}</h3>
+                        ${isSignedIn ? `
                         <div class="quantity-control">
                             <label>Qty:</label>
                             <input type="number" class="meal-quantity" data-recipe-id="${recipe.id}" value="0" min="0" step="1">
                         </div>
+                        ` : ''}
                     </div>
                 </div>
             `).join('')}
@@ -514,7 +516,8 @@ app.post('/api/process-recipe', (req, res) => {
   const processedMarkdown = RecipeParser.substituteVariables(markdown, variables, multiplier, availableCups);
   let html = marked(processedMarkdown);
   
-  // Markdown natively handles checkboxes, no need for regex manipulation
+  // Remove disabled attribute from checkboxes to make them interactive
+  html = html.replace(/<input disabled="" type="checkbox">/g, '<input type="checkbox" class="task-list-item-checkbox">');
   
   res.json({ html });
 });
@@ -569,49 +572,89 @@ app.get('/grocery-list', (req, res) => {
             const ingredientsList = document.getElementById('ingredientsList');
             const mealsList = document.getElementById('mealsList');
             
-            // Get all unique ingredients from selected meals
-            const allIngredients = new Set();
-            const selectedMeals = [];
-            
-            Object.entries(mealQuantities).forEach(([recipeId, quantity]) => {
-                if (quantity > 0) {
-                    const recipe = recipes.find(r => r.id === recipeId);
-                    if (recipe) {
-                        selectedMeals.push({ ...recipe, quantity });
-                        
-                        // Add ingredients (just names, not quantities)
-                        Object.keys(recipe.variables || {}).forEach(ingredient => {
-                            const ingredientName = ingredient.replace(/_/g, ' ');
-                            allIngredients.add(ingredientName);
-                        });
-                    }
+            // Reload quantities from server if signed in
+            if (${!!req.session.userId}) {
+                fetch('/api/meal-quantities')
+                    .then(response => response.json())
+                    .then(data => {
+                        mealQuantities = data;
+                        updateGroceryDisplay();
+                    })
+                    .catch(error => {
+                        console.error('Error loading quantities:', error);
+                        updateGroceryDisplay();
+                    });
+            } else {
+                // Load from localStorage for non-signed-in users
+                try {
+                    mealQuantities = JSON.parse(localStorage.getItem('mealQuantities') || '{}');
+                } catch (e) {
+                    console.error('Error loading from localStorage:', e);
+                    mealQuantities = {};
                 }
-            });
+                updateGroceryDisplay();
+            }
             
-            // Populate ingredients list
-            ingredientsList.innerHTML = Array.from(allIngredients)
-                .sort()
-                .map(ingredient => \`<li><label><input type="checkbox"> \${ingredient}</label></li>\`)
-                .join('');
-            
-            // Populate meals list
-            mealsList.innerHTML = selectedMeals
-                .map(meal => \`
-                    <div class="meal-tile-small">
-                        <img src="/images/\${meal.id}.jpg" alt="\${meal.title}" onerror="this.src='/images/default.jpg'">
-                        <div class="meal-info">
-                            <h4>\${meal.title}</h4>
-                            <span class="meal-quantity">Qty: \${meal.quantity}</span>
+            function updateGroceryDisplay() {
+                // Get all unique ingredients from selected meals
+                const allIngredients = new Set();
+                const selectedMeals = [];
+                
+                Object.entries(mealQuantities).forEach(([recipeId, quantity]) => {
+                    if (quantity > 0) {
+                        const recipe = recipes.find(r => r.id === recipeId);
+                        if (recipe) {
+                            selectedMeals.push({ ...recipe, quantity });
+                            
+                            // Add ingredients (just names, not quantities)
+                            Object.keys(recipe.variables || {}).forEach(ingredient => {
+                                const ingredientName = ingredient.replace(/_/g, ' ');
+                                allIngredients.add(ingredientName);
+                            });
+                        }
+                    }
+                });
+                
+                // Populate ingredients list
+                ingredientsList.innerHTML = Array.from(allIngredients)
+                    .sort()
+                    .map(ingredient => \`<li><label><input type="checkbox" class="grocery-checkbox"> \${ingredient}</label></li>\`)
+                    .join('');
+                
+                // Populate meals list
+                mealsList.innerHTML = selectedMeals
+                    .map(meal => \`
+                        <div class="meal-tile-small">
+                            <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
+                            <div class="meal-info">
+                                <h4>\${meal.title}</h4>
+                                <span class="meal-quantity">Qty: \${meal.quantity}</span>
+                            </div>
                         </div>
-                    </div>
-                \`)
-                .join('');
+                    \`)
+                    .join('');
+            }
         }
         
         function markPurchased() {
             if (confirm('Mark all items as purchased and reset meal quantities?')) {
+                // Clear localStorage for non-signed-in users
                 localStorage.setItem('mealQuantities', JSON.stringify({}));
-                window.location.href = '/';
+                
+                // If user is signed in, also clear database quantities
+                if (${!!req.session.userId}) {
+                    fetch('/api/meal-quantities/reset', {
+                        method: 'POST'
+                    }).then(() => {
+                        window.location.href = '/';
+                    }).catch(error => {
+                        console.error('Error resetting quantities:', error);
+                        // Still redirect even if reset fails
+                        window.location.href = '/';
+                    });
+                } else {
+                    window.location.href = '/';
+                }
             }
         }
         
@@ -675,6 +718,22 @@ app.post('/api/meal-quantity', (req, res) => {
       res.json({ success: true });
     });
   }
+});
+
+app.post('/api/meal-quantities/reset', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  
+  // Delete all meal quantities for this user
+  db.run('DELETE FROM meal_quantities WHERE user_id = ?', 
+    [req.session.userId], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json({ success: true });
+  });
 });
 
 app.get('/api/search/:query', (req, res) => {
