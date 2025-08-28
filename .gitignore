@@ -75,7 +75,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# Note: public directory is needed for Express static assets
 
 # Storybook build outputs
 .out
