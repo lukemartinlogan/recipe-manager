@@ -8,6 +8,7 @@ This repository includes multiple Docker Compose configurations for different de
 - Builds from GitHub repository
 - Port 3001 exposed
 - Persistent data volumes
+- Mounts ../recipes for recipe files
 - Health checks enabled
 
 ### 2. Local Development (`docker-compose.local.yml`)
@@ -15,12 +16,19 @@ This repository includes multiple Docker Compose configurations for different de
 - Source code mounted for development
 - Port 3001 exposed
 - Separate local data volume
+- Mounts ../recipes for recipe files
 
 ### 3. Production (`docker-compose.prod.yml`)
 - Uses pre-built Docker Hub image
 - Port 80 exposed
 - Resource limits
+- Mounts ./recipes for recipe files
 - Optional nginx reverse proxy with SSL
+
+### 4. Configurable Recipes (`docker-compose.recipes.yml`)
+- Uses RECIPES_SOURCE environment variable
+- Flexible recipe directory mounting
+- Perfect for different deployment environments
 
 ## Quick Start
 
@@ -49,11 +57,24 @@ cd docker
 docker-compose -f docker-compose.prod.yml --profile with-nginx up -d
 ```
 
+### Configurable Recipes
+```bash
+cd docker
+# Set custom recipes path
+RECIPES_SOURCE=/path/to/your/recipes docker-compose -f docker-compose.recipes.yml up -d
+
+# Or use .env file
+cp .env.example .env
+# Edit .env and set RECIPES_SOURCE
+docker-compose -f docker-compose.recipes.yml up -d
+```
+
 ## Data Persistence
 
 All configurations include persistent volumes for:
 - **Database**: SQLite database files
-- **Images**: Recipe images and uploads
+- **Images**: Recipe images and uploads  
+- **Recipes**: Recipe markdown files (mounted from host)
 - **Source code**: (local development only)
 
 ### Volume Management

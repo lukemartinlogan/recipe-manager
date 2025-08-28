@@ -1,45 +1,58 @@
 FROM node:18-alpine
 
-# Install git
-RUN apk add --no-cache git
+# Install git and other useful tools
+RUN apk add --no-cache git curl wget
 
 # Set working directory
 WORKDIR /app
 
-# Clone the repository and handle potential issues
-RUN git clone https://github.com/lukemartinlogan/recipe-manager.git . || \
-    (echo "Repository not found, creating basic structure..." && \
-     mkdir -p /app && \
-     echo '{"name": "recipe-manager", "version": "1.0.0", "main": "server.js", "scripts": {"start": "node server.js"}, "dependencies": {"express": "^4.18.2", "marked": "^5.1.1", "express-session": "^1.17.3", "sqlite3": "^5.1.6"}}' > package.json)
-
-# Install dependencies (with fallback)
-RUN npm install || echo "npm install failed, will retry at runtime"
-
 # Expose port
 EXPOSE 3001
 
-# Create startup script with better error handling
-RUN echo '#!/bin/sh' > start.sh && \
-    echo 'set -e' >> start.sh && \
-    echo 'echo "Checking repository status..."' >> start.sh && \
-    echo 'if [ -d ".git" ]; then' >> start.sh && \
-    echo '  echo "Pulling latest changes..."' >> start.sh && \
-    echo '  git pull origin master || git pull origin main || echo "Git pull failed, continuing..."' >> start.sh && \
-    echo 'else' >> start.sh && \
-    echo '  echo "Not a git repository, skipping pull..."' >> start.sh && \
-    echo 'fi' >> start.sh && \
-    echo 'echo "Installing/updating dependencies..."' >> start.sh && \
-    echo 'npm install || echo "npm install failed, trying to continue..."' >> start.sh && \
-    echo 'echo "Starting application..."' >> start.sh && \
-    echo 'if [ -f "server.js" ]; then' >> start.sh && \
-    echo '  npm start' >> start.sh && \
-    echo 'else' >> start.sh && \
-    echo '  echo "server.js not found. Available files:"' >> start.sh && \
-    echo '  ls -la' >> start.sh && \
-    echo '  echo "Trying to start with node directly..."' >> start.sh && \
-    echo '  node index.js 2>/dev/null || node app.js 2>/dev/null || echo "No suitable entry point found"' >> start.sh && \
-    echo 'fi' >> start.sh && \
-    chmod +x start.sh
+# Environment variables
+ENV NODE_ENV=production
+ENV PORT=3001
+
+# Create startup script that handles external application mounting
+RUN echo '#!/bin/sh' > /usr/local/bin/start-recipe-manager.sh && \
+    echo 'set -e' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'echo "🍳 Recipe Manager Container Starting..."' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '# Check if application is mounted' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'if [ ! -f "/app/server.js" ]; then' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "❌ No application found at /app"' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "Please mount your recipe-manager repository to /app"' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "Example: docker run -v /path/to/recipe-manager:/app recipe-manager"' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  exit 1' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'fi' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '# Check package.json and install dependencies' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'if [ -f "/app/package.json" ]; then' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "📦 Installing/updating dependencies..."' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  npm install || echo "⚠️  npm install failed, trying to continue..."' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'else' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "⚠️  No package.json found"' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'fi' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '# Check for recipes directory' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'if [ -d "/app/recipes" ]; then' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  RECIPE_COUNT=$(ls /app/recipes/*.md 2>/dev/null | wc -l)' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "📚 Found $RECIPE_COUNT recipe files"' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'else' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "⚠️  No recipes directory found at /app/recipes"' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'fi' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '# Start the application' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'echo "🚀 Starting Recipe Manager on port $PORT..."' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'if [ -f "/app/server.js" ]; then' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  exec npm start' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'else' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  echo "❌ server.js not found"' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  ls -la /app' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo '  exit 1' >> /usr/local/bin/start-recipe-manager.sh && \
+    echo 'fi' >> /usr/local/bin/start-recipe-manager.sh && \
+    chmod +x /usr/local/bin/start-recipe-manager.sh
 
 # Run the startup script
-CMD ["./start.sh"]
+CMD ["/usr/local/bin/start-recipe-manager.sh"]

@@ -7,51 +7,57 @@ All Docker-related files have been moved to the `docker/` subdirectory for bette
 ### Using Docker Compose (Recommended)
 
 ```bash
-# Development (GitHub repo)
+# Quick start with defaults (port 3050, mounts parent directory)
 cd docker && docker-compose up -d
 
-# Local development
-cd docker && docker-compose -f docker-compose.local.yml up -d
+# Customize with environment variables
+cd docker && APP_SOURCE=/path/to/recipe-manager HOST_PORT=8080 docker-compose up -d
 
-# Production
-cd docker && docker-compose -f docker-compose.prod.yml up -d
+# Use environment file
+cd docker && cp .env.example .env
+# Edit .env file with your settings
+cd docker && docker-compose up -d
+```
+
+### Using Direct Docker Run
+
+```bash
+# Mount your recipe-manager repository (default port 3050)
+docker run -p 3050:3001 -v /path/to/recipe-manager:/app lukemartinlogan/recipe-manager:latest
 ```
 
 ### Using Build Script
 
 ```bash
-# Build and deploy
+# Build and deploy runtime container
 cd docker && ./build-and-deploy.sh
-
-# Build with local files
-cd docker && ./build-and-deploy.sh latest local
 ```
 
 ## Documentation
 
+- **[External App Setup](./docker/README-External-App.md)** - Complete external application guide
+- **[Docker Compose Setup](./docker/README-Docker-Compose.md)** - Docker Compose configurations
 - **[Docker Setup](./docker/README-Docker.md)** - Basic Docker usage
-- **[Docker Compose Setup](./docker/README-Docker-Compose.md)** - Comprehensive Docker Compose guide
 
 ## Directory Structure
 
 ```
 docker/
-├── Dockerfile                    # GitHub-based build
-├── Dockerfile.local             # Local file-based build
-├── docker-compose.yml           # Standard development
-├── docker-compose.local.yml     # Local development
-├── docker-compose.prod.yml      # Production with SSL
+├── Dockerfile                    # Runtime container only
+├── docker-compose.yml           # Single configurable setup
 ├── nginx.conf                   # Nginx configuration
-├── build-and-deploy.sh          # Automated build script
-├── README-Docker.md             # Docker documentation
-└── README-Docker-Compose.md     # Docker Compose documentation
+├── build-and-deploy.sh          # Build runtime container
+├── .env                         # Default environment config
+├── .env.example                 # Environment template
+└── README-*.md                  # Documentation files
 ```
 
 ## Key Features
 
-- **Multiple Build Options**: GitHub repo or local files
-- **Environment-Specific Configs**: Development, local, and production
-- **Data Persistence**: SQLite database and images preserved
-- **SSL Support**: Optional nginx reverse proxy
-- **Health Monitoring**: Built-in health checks
+- **External Application**: Mount any recipe-manager repository
+- **Runtime Only**: Container provides Node.js environment only
+- **No Rebuilds**: Update code without rebuilding container
+- **Live Development**: Edit code on host, see changes immediately
+- **Data Persistence**: SQLite database preserved across updates
+- **Multiple Environments**: One container, multiple app versions
 - **Easy Deployment**: Automated build and deployment scripts

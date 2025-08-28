@@ -12,19 +12,16 @@ TAG="${1:-latest}"
 USE_LOCAL="${2:-}"
 FULL_IMAGE_NAME="${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${TAG}"
 
-# Determine which Dockerfile to use
-if [[ "$USE_LOCAL" == "local" ]] || [[ ! $(curl -s -o /dev/null -w "%{http_code}" https://github.com/lukemartinlogan/recipe-manager) == "200" ]]; then
-    DOCKERFILE="Dockerfile.local"
-    echo "🐳 Building Docker image (LOCAL): ${FULL_IMAGE_NAME}"
-    echo "📁 Using local files instead of GitHub repository"
-else
-    DOCKERFILE="Dockerfile"
-    echo "🐳 Building Docker image (GITHUB): ${FULL_IMAGE_NAME}"
-    echo "📥 Will clone from GitHub repository"
-fi
+# Build the Docker image - now it just builds the runtime container
+echo "🐳 Building Docker runtime container: ${FULL_IMAGE_NAME}"
+echo "📦 This container expects the application to be mounted at runtime"
 
-# Build the Docker image (from parent directory)
-docker build -f "docker/${DOCKERFILE}" -t "${FULL_IMAGE_NAME}" ../
+# Ensure we're in the docker directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}"
+
+# Build the Docker image (from docker directory)
+docker build -f "Dockerfile" -t "${FULL_IMAGE_NAME}" .
 
 echo "✅ Build completed successfully!"
 
@@ -52,11 +49,16 @@ fi
 
 echo ""
 echo "📋 Available commands:"
-echo "   Local run:  docker run -p 3001:3001 ${FULL_IMAGE_NAME}"
-echo "   With logs:  docker run -p 3001:3001 ${FULL_IMAGE_NAME} 2>&1"
-echo "   Background: docker run -d -p 3001:3001 --name recipe-manager-app ${FULL_IMAGE_NAME}"
+echo "   Local run:  docker run -p 3050:3001 ${FULL_IMAGE_NAME}"
+echo "   With logs:  docker run -p 3050:3001 ${FULL_IMAGE_NAME} 2>&1"
+echo "   Background: docker run -d -p 3050:3001 --name recipe-manager-app ${FULL_IMAGE_NAME}"
 echo ""
 echo "🔧 Build script usage:"
-echo "   cd docker && ./build-and-deploy.sh                    # Build latest with GitHub repo"
-echo "   cd docker && ./build-and-deploy.sh v1.0.0             # Build v1.0.0 with GitHub repo"
-echo "   cd docker && ./build-and-deploy.sh latest local       # Build with local files"
+echo "   ./docker/build-and-deploy.sh                          # Build latest runtime container"
+echo "   ./docker/build-and-deploy.sh v1.0.0                   # Build v1.0.0 runtime container"
+echo "   cd docker && ./build-and-deploy.sh                    # Also works from docker directory"
+echo ""
+echo "🏃 Usage examples:"
+echo "   docker run -p 3050:3001 -v /path/to/recipe-manager:/app ${FULL_IMAGE_NAME}"
+echo "   cd docker && cp .env.example .env && docker-compose up -d"
+echo "   APP_SOURCE=/path/to/recipe-manager docker-compose up -d"
