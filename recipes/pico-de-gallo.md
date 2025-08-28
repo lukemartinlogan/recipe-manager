@@ -4,5 +4,5 @@
 - 3x tomatoes
 - Onion
 - 1 Jalapeno
+- 1 green pepper
 - ½ cup Cilantro
-- 1 lime
