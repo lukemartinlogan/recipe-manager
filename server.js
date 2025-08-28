@@ -688,10 +688,18 @@ app.get('/grocery-list', (req, res) => {
                 groceryItems.forEach(item => {
                     const dragHandle = item.querySelector('.drag-handle');
                     
+                    // Mouse events for desktop
                     dragHandle.addEventListener('mousedown', function(e) {
                         e.preventDefault();
                         startDrag(item, e);
                     });
+                    
+                    // Touch events for mobile
+                    dragHandle.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        startDrag(item, touch);
+                    }, { passive: false });
                 });
             }
             
@@ -720,21 +728,27 @@ app.get('/grocery-list', (req, res) => {
                 // Insert placeholder
                 item.parentNode.insertBefore(placeholder, item.nextSibling);
                 
-                // Move item with mouse
+                // Move item with mouse/touch
                 updateDragPosition(e);
                 
-                // Add global mouse events
+                // Add global mouse and touch events
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchmove', handleMouseMove, { passive: false });
+                document.addEventListener('touchend', endDrag);
             }
             
             function handleMouseMove(e) {
                 if (!isDragging || !draggedElement) return;
                 
-                updateDragPosition(e);
+                // Handle both mouse and touch events
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                
+                updateDragPosition({ clientX, clientY });
                 
                 // Find the closest grocery item to insert before
-                const afterElement = getDragAfterElement(ingredientsList, e.clientY);
+                const afterElement = getDragAfterElement(ingredientsList, clientY);
                 if (afterElement == null) {
                     ingredientsList.appendChild(placeholder);
                 } else {
@@ -745,8 +759,11 @@ app.get('/grocery-list', (req, res) => {
             function updateDragPosition(e) {
                 if (!draggedElement) return;
                 
-                draggedElement.style.left = (e.clientX - draggedElement.offsetWidth / 2) + 'px';
-                draggedElement.style.top = (e.clientY - 20) + 'px';
+                const clientX = e.clientX || e.clientX;
+                const clientY = e.clientY || e.clientY;
+                
+                draggedElement.style.left = (clientX - draggedElement.offsetWidth / 2) + 'px';
+                draggedElement.style.top = (clientY - 20) + 'px';
             }
             
             function getDragAfterElement(container, y) {
@@ -792,9 +809,11 @@ app.get('/grocery-list', (req, res) => {
                 draggedElement = null;
                 placeholder = null;
                 
-                // Remove global mouse events
+                // Remove global mouse and touch events
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchmove', handleMouseMove);
+                document.removeEventListener('touchend', endDrag);
             }
             
             function updateItemOrder() {
