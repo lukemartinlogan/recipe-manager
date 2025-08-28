@@ -1,0 +1,1 @@
+ I also want a form to be automatically rendered to change the quantity of variables. By default, the scale should be one. However, if users change this, it should multiply each variable by the scalar. E.g., $chicken=1/4lb$ is scale 1, but if I change scale to 2 it should render as 2/4lb of chicken
