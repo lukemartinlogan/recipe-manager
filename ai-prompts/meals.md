@@ -1,4 +1,5 @@
 Use the web architect agent to define a comprehensive website specification for meal planning and tracking. 
+Save the plan under plan/plan.md
 
 Use nodejs for the server code. Ask for additional details and questions for whatever is unclear.
 
@@ -47,5 +48,3 @@ Should show the meals the user has selected for the day in order.
 The meals can be clicked on individually or moved around.
 
 Meals can be removed or quantities changed.
-
-There should be a button to say "Cooked" 
