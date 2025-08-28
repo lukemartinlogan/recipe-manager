@@ -22,21 +22,31 @@ app.use(session({
   cookie: { secure: false }
 }));
 
-// Middleware to set correct MIME types
+// Debug middleware for static file requests
 app.use((req, res, next) => {
-  if (req.path.endsWith('.css')) {
-    res.type('text/css');
-  } else if (req.path.endsWith('.js')) {
-    res.type('application/javascript');
-  } else if (req.path.endsWith('.png')) {
-    res.type('image/png');
-  } else if (req.path.endsWith('.jpg') || req.path.endsWith('.jpeg')) {
-    res.type('image/jpeg');
+  if (req.path.match(/\.(css|js|png|jpg|jpeg)$/)) {
+    console.log(`Static file request: ${req.path}`);
   }
   next();
 });
 
-app.use(express.static('public'));
+// Configure express.static with explicit MIME type options
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+    console.log(`Setting headers for: ${path}`);
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+      console.log('Set CSS content type');
+    } else if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+      console.log('Set JS content type');
+    } else if (path.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+    } else if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    }
+  }
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
