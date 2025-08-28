@@ -22,6 +22,20 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+// Middleware to set correct MIME types
+app.use((req, res, next) => {
+  if (req.path.endsWith('.css')) {
+    res.type('text/css');
+  } else if (req.path.endsWith('.js')) {
+    res.type('application/javascript');
+  } else if (req.path.endsWith('.png')) {
+    res.type('image/png');
+  } else if (req.path.endsWith('.jpg') || req.path.endsWith('.jpeg')) {
+    res.type('image/jpeg');
+  }
+  next();
+});
+
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
