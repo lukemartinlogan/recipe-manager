@@ -25,6 +25,11 @@
 - [ ] $salt = sea salt$
 - [ ] $black_pepper = 1tsp$
 
+### Optional
+- [ ] $crackers = 1$
+- [ ] $shredded_four_cheese = 1$
+- [ ] $avocado = 1$
+
 ## Instructions
 1. Heat $olive_oil$ in a large pot over medium heat
 2. Add $onion$ and $bell_pepper$, cook for 5 minutes until softened
