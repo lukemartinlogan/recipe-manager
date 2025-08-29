@@ -433,6 +433,34 @@ h1 {
     font-size: 0.9rem;
 }
 
+.meal-quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.meal-quantity-control label {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+.grocery-meal-quantity {
+    width: 60px;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.grocery-meal-quantity:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
 .purchased-btn {
     width: 100%;
     background: #28a745;

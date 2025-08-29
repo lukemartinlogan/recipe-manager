@@ -753,7 +753,14 @@ app.get('/grocery-list', (req, res) => {
             }
             
             function displayGroceryItems(items) {
-                ingredientsList.innerHTML = items
+                // Sort items so unchecked items come first, then checked items
+                const sortedItems = items.sort((a, b) => {
+                    if (a.is_checked && !b.is_checked) return 1;
+                    if (!a.is_checked && b.is_checked) return -1;
+                    return a.sort_order - b.sort_order;
+                });
+                
+                ingredientsList.innerHTML = sortedItems
                     .map(item => \`
                         <li class="grocery-item \${item.is_checked ? 'checked' : ''}" 
                             data-ingredient="\${item.ingredient_name}">
@@ -946,7 +953,13 @@ app.get('/grocery-list', (req, res) => {
                             <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
                             <div class="meal-info">
                                 <h4>\${meal.title}</h4>
-                                <span class="meal-quantity">Qty: \${meal.quantity}</span>
+                                <div class="meal-quantity-control">
+                                    <label>Qty:</label>
+                                    <input type="number" class="grocery-meal-quantity" 
+                                           data-recipe-id="\${meal.id}" 
+                                           value="\${meal.quantity}" 
+                                           min="0" step="0.25">
+                                </div>
                             </div>
                         </div>
                     \`)
@@ -992,6 +1005,31 @@ app.get('/grocery-list', (req, res) => {
                 
                 // Initialize drag and drop for non-signed-in users too
                 initializeDragAndDrop();
+                
+                // Add event delegation for non-signed-in users to move checked items
+                ingredientsList.addEventListener('change', function(e) {
+                    if (e.target.classList.contains('grocery-checkbox')) {
+                        const listItem = e.target.closest('.grocery-item');
+                        const is_checked = e.target.checked;
+                        
+                        if (listItem) {
+                            listItem.classList.toggle('checked', is_checked);
+                            
+                            if (is_checked) {
+                                // Move to bottom
+                                ingredientsList.appendChild(listItem);
+                            } else {
+                                // Move to top before first checked item
+                                const firstCheckedItem = ingredientsList.querySelector('.grocery-item.checked');
+                                if (firstCheckedItem) {
+                                    ingredientsList.insertBefore(listItem, firstCheckedItem);
+                                } else {
+                                    ingredientsList.insertBefore(listItem, ingredientsList.firstChild);
+                                }
+                            }
+                        }
+                    }
+                });
                     
                 mealsList.innerHTML = selectedMeals
                     .map(meal => \`
@@ -999,7 +1037,13 @@ app.get('/grocery-list', (req, res) => {
                             <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
                             <div class="meal-info">
                                 <h4>\${meal.title}</h4>
-                                <span class="meal-quantity">Qty: \${meal.quantity}</span>
+                                <div class="meal-quantity-control">
+                                    <label>Qty:</label>
+                                    <input type="number" class="grocery-meal-quantity" 
+                                           data-recipe-id="\${meal.id}" 
+                                           value="\${meal.quantity}" 
+                                           min="0" step="0.25">
+                                </div>
                             </div>
                         </div>
                     \`)
@@ -1040,6 +1084,29 @@ app.get('/grocery-list', (req, res) => {
             }
         }
         
+        function updateItemOrderAfterCheck() {
+            const ingredientsList = document.getElementById('ingredientsList');
+            const items = [...ingredientsList.querySelectorAll('.grocery-item')];
+            const orderedIngredients = items.map(item => item.dataset.ingredient);
+            
+            if (${!!req.session.userId}) {
+                fetch('/api/grocery-items/reorder-all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderedIngredients })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        console.error('Failed to update order after check');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating order after check:', error);
+                });
+            }
+        }
+        
         // Add event listener for checkbox changes
         document.addEventListener('change', function(e) {
             if (e.target.classList.contains('grocery-checkbox')) {
@@ -1051,10 +1118,59 @@ app.get('/grocery-list', (req, res) => {
                 const listItem = e.target.closest('.grocery-item');
                 if (listItem) {
                     listItem.classList.toggle('checked', is_checked);
+                    
+                    // Move checked items to bottom, unchecked items to top
+                    const ingredientsList = document.getElementById('ingredientsList');
+                    if (is_checked) {
+                        // Move to bottom - append to end of list
+                        ingredientsList.appendChild(listItem);
+                    } else {
+                        // Move to top - find first checked item and insert before it
+                        const firstCheckedItem = ingredientsList.querySelector('.grocery-item.checked');
+                        if (firstCheckedItem) {
+                            ingredientsList.insertBefore(listItem, firstCheckedItem);
+                        } else {
+                            // No checked items, just move to top
+                            ingredientsList.insertBefore(listItem, ingredientsList.firstChild);
+                        }
+                    }
+                    
+                    // Update order in database after moving
+                    updateItemOrderAfterCheck();
                 }
                 
                 // Save to database
                 toggleGroceryItem(ingredient_name, is_checked);
+            }
+        });
+        
+        // Add event listener for grocery meal quantity changes
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('grocery-meal-quantity')) {
+                const recipeId = e.target.getAttribute('data-recipe-id');
+                const newQuantity = parseFloat(e.target.value) || 0;
+                
+                // Update meal quantities
+                mealQuantities[recipeId] = newQuantity;
+                
+                if (${!!req.session.userId}) {
+                    // Save to database for signed-in users
+                    fetch('/api/meal-quantity', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ recipeId, quantity: newQuantity })
+                    })
+                    .then(() => {
+                        // Reload the grocery list to reflect changes
+                        loadGroceryList();
+                    })
+                    .catch(error => console.error('Error updating meal quantity:', error));
+                } else {
+                    // Update localStorage for non-signed-in users
+                    localStorage.setItem('mealQuantities', JSON.stringify(mealQuantities));
+                    // Reload the grocery display
+                    updateGroceryDisplayForNonSignedIn();
+                }
             }
         });
         

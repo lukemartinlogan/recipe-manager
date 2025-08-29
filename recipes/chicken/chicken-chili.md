@@ -7,7 +7,7 @@
 - [ ] $bell_pepper = 1 red bell pepper, chopped$
 - [ ] $garlic = 3 garlic cloves, minced$
 - [ ] $diced_tomatoes = 15 ounces diced tomatoes (one can)$
-- [ ] $broth = 2 cups chicken or turkey broth$
+- [ ] $chicken_broth = 2 cups chicken$
 - [ ] $black_beans = 1 (15oz) can black beans, rinsed and drained$
 - [ ] $corn = 1 1/2 cup frozen sweet corn (or 15 oz can), rinsed and drained$
 - [ ] $chili_powder = 1 teaspoon chili powder$
