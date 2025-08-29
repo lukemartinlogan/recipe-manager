@@ -811,15 +811,17 @@ app.get('/grocery-list', (req, res) => {
                 // Create placeholder
                 placeholder = document.createElement('li');
                 placeholder.className = 'drag-placeholder';
-                placeholder.innerHTML = '<div style="height: 1px; background: #007bff; margin: 10px 0;"></div>';
+                placeholder.innerHTML = '<div class="placeholder-line"></div>';
                 
                 // Style the dragged item
                 item.style.position = 'fixed';
                 item.style.zIndex = '1000';
                 item.style.pointerEvents = 'none';
-                item.style.transform = 'rotate(3deg)';
-                item.style.opacity = '0.8';
+                item.style.transform = 'rotate(3deg) scale(1.05)';
+                item.style.opacity = '0.9';
                 item.style.width = item.offsetWidth + 'px';
+                item.style.boxShadow = '0 8px 16px rgba(0,0,0,0.3)';
+                item.classList.add('dragging');
                 
                 // Insert placeholder
                 item.parentNode.insertBefore(placeholder, item.nextSibling);
@@ -843,12 +845,15 @@ app.get('/grocery-list', (req, res) => {
                 
                 updateDragPosition({ clientX, clientY });
                 
-                // Find the closest grocery item to insert before
-                const afterElement = getDragAfterElement(ingredientsList, clientY);
-                if (afterElement == null) {
+                // Find the element to insert before based on mouse position
+                const insertBeforeElement = getDragAfterElement(ingredientsList, clientY);
+                
+                if (insertBeforeElement === null) {
+                    // Insert at the end of the list
                     ingredientsList.appendChild(placeholder);
                 } else {
-                    ingredientsList.insertBefore(placeholder, afterElement);
+                    // Insert before the target element
+                    ingredientsList.insertBefore(placeholder, insertBeforeElement);
                 }
             }
             
@@ -865,16 +870,22 @@ app.get('/grocery-list', (req, res) => {
             function getDragAfterElement(container, y) {
                 const draggableElements = [...container.querySelectorAll('.grocery-item:not(.dragging)')];
                 
-                return draggableElements.reduce((closest, child) => {
+                // Find the element that the mouse is currently over or should be inserted after
+                let targetElement = null;
+                
+                for (const child of draggableElements) {
                     const box = child.getBoundingClientRect();
-                    const offset = y - box.top - box.height / 2;
+                    const childCenterY = box.top + box.height / 2;
                     
-                    if (offset < 0 && offset > closest.offset) {
-                        return { offset: offset, element: child };
-                    } else {
-                        return closest;
+                    // If mouse is above the center of this element, insert before it
+                    if (y < childCenterY) {
+                        targetElement = child;
+                        break;
                     }
-                }, { offset: Number.NEGATIVE_INFINITY }).element;
+                }
+                
+                // If no element found (mouse is below all elements), return null to append at end
+                return targetElement;
             }
             
             function endDrag(e) {
@@ -892,6 +903,8 @@ app.get('/grocery-list', (req, res) => {
                 draggedElement.style.width = '';
                 draggedElement.style.left = '';
                 draggedElement.style.top = '';
+                draggedElement.style.boxShadow = '';
+                draggedElement.classList.remove('dragging');
                 
                 // Insert the item before the placeholder
                 if (placeholder.parentNode) {
@@ -949,7 +962,7 @@ app.get('/grocery-list', (req, res) => {
                 
                 mealsList.innerHTML = selectedMeals
                     .map(meal => \`
-                        <div class="meal-tile-small">
+                        <div class="meal-tile-small clickable-meal" data-recipe-id="\${meal.id}">
                             <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
                             <div class="meal-info">
                                 <h4>\${meal.title}</h4>
@@ -1033,7 +1046,7 @@ app.get('/grocery-list', (req, res) => {
                     
                 mealsList.innerHTML = selectedMeals
                     .map(meal => \`
-                        <div class="meal-tile-small">
+                        <div class="meal-tile-small clickable-meal" data-recipe-id="\${meal.id}">
                             <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
                             <div class="meal-info">
                                 <h4>\${meal.title}</h4>
@@ -1170,6 +1183,24 @@ app.get('/grocery-list', (req, res) => {
                     localStorage.setItem('mealQuantities', JSON.stringify(mealQuantities));
                     // Reload the grocery display
                     updateGroceryDisplayForNonSignedIn();
+                }
+            }
+        });
+        
+        // Add event listener for meal tile clicks
+        document.addEventListener('click', function(e) {
+            const mealTile = e.target.closest('.clickable-meal');
+            if (mealTile) {
+                // Don't navigate if clicking on the quantity input or its label
+                if (e.target.classList.contains('grocery-meal-quantity') || 
+                    e.target.closest('.meal-quantity-control')) {
+                    return;
+                }
+                
+                const recipeId = mealTile.getAttribute('data-recipe-id');
+                if (recipeId) {
+                    const quantity = mealQuantities[recipeId] || 1;
+                    window.location.href = \`/recipe/\${recipeId}?quantity=\${quantity}\`;
                 }
             }
         });

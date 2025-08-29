@@ -416,6 +416,17 @@ h1 {
     border-radius: 8px;
 }
 
+.clickable-meal {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clickable-meal:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
 .meal-tile-small img {
     width: 60px;
     height: 60px;
@@ -459,6 +470,14 @@ h1 {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.meal-quantity-control {
+    cursor: default;
+}
+
+.grocery-meal-quantity {
+    cursor: text;
 }
 
 .purchased-btn {
@@ -779,12 +798,36 @@ h1 {
     transform: translateY(-1px);
 }
 
+.grocery-item.dragging {
+    background: #fff;
+    border: 2px solid #007bff;
+}
+
 .drag-placeholder {
-    height: 2px;
-    background: #007bff;
-    margin: 8px 0;
-    border-radius: 1px;
+    height: 3px;
+    margin: 4px 0;
+    border-radius: 2px;
     list-style: none;
+    padding: 0;
+}
+
+.placeholder-line {
+    height: 3px;
+    background: #007bff;
+    border-radius: 2px;
+    opacity: 0.8;
+    animation: placeholder-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes placeholder-pulse {
+    from {
+        opacity: 0.5;
+        transform: scaleY(1);
+    }
+    to {
+        opacity: 1;
+        transform: scaleY(1.5);
+    }
 }
 
 .grocery-item.checked {
