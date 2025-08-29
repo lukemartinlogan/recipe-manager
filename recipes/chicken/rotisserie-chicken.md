@@ -1,4 +1,4 @@
 # Rotisserie Chicken
 
 ## Ingredients
-- [ ] $rotisserie chicken$
+- [ ] $rotisserie_chicken$

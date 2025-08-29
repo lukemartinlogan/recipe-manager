@@ -3,3 +3,9 @@ Create a labeling system. Recipes can have an optional section called labels. Us
 The set of all labels should be compiled into a markdown file by searching all recipes in the recipe folder.
 
 Labels should appear as a section containing checkboxes for each label. It does not need to be in the main menu, but should appear as the first section.
+
+Implement a method to link to other recipes by the name of their markdown file. For example, coconut curry may have a section called "Sides" that recommends sides to cook along with the recipe
+
+Make it so when something is crossed off the grocery list, it will go to the bottom of the grocery list.
+
+Also make it so that I can change the quantity of meals in the meal section of the grocery list.
