@@ -266,7 +266,7 @@ class RecipeParser {
   }
 }
 
-// Get all recipe files
+// Get all recipe files recursively from subdirectories
 function getRecipes() {
   const recipesDir = path.join(__dirname, 'recipes');
   if (!fs.existsSync(recipesDir)) {
@@ -274,23 +274,47 @@ function getRecipes() {
     return [];
   }
   
-  const files = fs.readdirSync(recipesDir);
-  return files.filter(file => file.endsWith('.md')).map(file => {
-    const filePath = path.join(recipesDir, file);
-    const content = fs.readFileSync(filePath, 'utf8');
-    const { variables } = RecipeParser.parseRecipe(content);
+  function scanDirectory(dir, relativePath = '') {
+    const items = fs.readdirSync(dir);
+    const recipes = [];
     
-    // Extract title from first line
-    const titleMatch = content.match(/^#\s*(.+)$/m);
-    const title = titleMatch ? titleMatch[1] : file.replace('.md', '');
+    for (const item of items) {
+      const fullPath = path.join(dir, item);
+      const stat = fs.statSync(fullPath);
+      
+      if (stat.isDirectory()) {
+        // Recursively scan subdirectory
+        const subPath = relativePath ? `${relativePath}/${item}` : item;
+        recipes.push(...scanDirectory(fullPath, subPath));
+      } else if (item.endsWith('.md')) {
+        // Process markdown file
+        const content = fs.readFileSync(fullPath, 'utf8');
+        const { variables } = RecipeParser.parseRecipe(content);
+        
+        // Extract title from first line
+        const titleMatch = content.match(/^#\s*(.+)$/m);
+        const title = titleMatch ? titleMatch[1] : item.replace('.md', '');
+        
+        // Create unique ID that includes subdirectory path
+        const recipeId = relativePath 
+          ? `${relativePath}/${item.replace('.md', '')}`
+          : item.replace('.md', '');
+        
+        recipes.push({
+          id: recipeId,
+          title,
+          filename: item,
+          relativePath,
+          fullPath: fullPath,
+          variables
+        });
+      }
+    }
     
-    return {
-      id: file.replace('.md', ''),
-      title,
-      filename: file,
-      variables
-    };
-  });
+    return recipes;
+  }
+  
+  return scanDirectory(recipesDir);
 }
 
 // Authentication routes
@@ -442,16 +466,19 @@ app.get('/', (req, res) => {
   }
 });
 
-app.get('/recipe/:id', (req, res) => {
-  const recipeId = req.params.id;
+app.get('/recipe/*', (req, res) => {
+  const recipeId = req.params[0]; // Get the full path after /recipe/
   const quantity = parseFloat(req.query.quantity) || 1;
-  const recipePath = path.join(__dirname, 'recipes', `${recipeId}.md`);
   
-  if (!fs.existsSync(recipePath)) {
+  // Find the recipe in our recipes list
+  const recipes = getRecipes();
+  const recipe = recipes.find(r => r.id === recipeId);
+  
+  if (!recipe) {
     return res.status(404).send('Recipe not found');
   }
   
-  const content = fs.readFileSync(recipePath, 'utf8');
+  const content = fs.readFileSync(recipe.fullPath, 'utf8');
   const { variables } = RecipeParser.parseRecipe(content);
   
   res.send(`
@@ -460,7 +487,7 @@ app.get('/recipe/:id', (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe: ${recipeId}</title>
+    <title>Recipe: ${recipe.title}</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
