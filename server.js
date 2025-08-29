@@ -683,7 +683,7 @@ app.get('/grocery-list', (req, res) => {
                     <!-- Will be populated by JavaScript -->
                 </div>
                 
-                <button id="purchasedBtn" class="purchased-btn" onclick="markPurchased()">
+                <button id="purchasedBtn" class="purchased-btn">
                     ✓ Purchased - Reset All Quantities
                 </button>
             </div>
@@ -717,41 +717,200 @@ app.get('/grocery-list', (req, res) => {
             }
             
             function calculateIngredientQuantity(ingredientValue, multiplier) {
-                // Extract numerical quantity from ingredient string
-                const match = ingredientValue.match(/^(\d*\.?\d+(?:\/\d+)?)/);
+                // Extract numerical quantity and unit from ingredient string
+                const match = ingredientValue.match(/^(\\d*\\.?\\d+(?:\\/\\d+)?)\\s*(\\S*)?\\s*(.*)/);
                 if (match) {
-                    let quantity = match[1];
+                    let [, quantityStr, unit, rest] = match;
+                    
                     // Handle fractions
-                    if (quantity.includes('/')) {
-                        const [num, den] = quantity.split('/');
+                    let quantity;
+                    if (quantityStr.includes('/')) {
+                        const [num, den] = quantityStr.split('/');
                         quantity = parseFloat(num) / parseFloat(den);
                     } else {
-                        quantity = parseFloat(quantity);
+                        quantity = parseFloat(quantityStr);
                     }
-                    return quantity * multiplier;
+                    
+                    const scaledQuantity = quantity * multiplier;
+                    
+                    // Format the scaled quantity with unit
+                    if (unit) {
+                        return formatQuantityWithUnit(scaledQuantity, unit);
+                    } else {
+                        return formatQuantity(scaledQuantity);
+                    }
                 }
-                // If no clear quantity found, default to 1
-                return multiplier;
+                
+                // If no clear quantity found, return the ingredient as-is or default to "1"
+                return ingredientValue.includes(' ') ? ingredientValue : '1';
+            }
+            
+            function normalizeUnit(unit) {
+                // Normalize synonymous units to a standard form
+                const unitMap = {
+                    // Volume measurements
+                    'tablespoon': 'tbsp',
+                    'tablespoons': 'tbsp',
+                    'teaspoon': 'tsp',
+                    'teaspoons': 'tsp',
+                    'cup': 'cup',
+                    'cups': 'cup',
+                    'ounce': 'oz',
+                    'ounces': 'oz',
+                    'fluid ounce': 'fl oz',
+                    'fluid ounces': 'fl oz',
+                    'pint': 'pt',
+                    'pints': 'pt',
+                    'quart': 'qt',
+                    'quarts': 'qt',
+                    'gallon': 'gal',
+                    'gallons': 'gal',
+                    'liter': 'l',
+                    'liters': 'l',
+                    'milliliter': 'ml',
+                    'milliliters': 'ml',
+                    
+                    // Weight measurements
+                    'pound': 'lb',
+                    'pounds': 'lb',
+                    'gram': 'g',
+                    'grams': 'g',
+                    'kilogram': 'kg',
+                    'kilograms': 'kg',
+                    
+                    // Count/pieces
+                    'piece': 'piece',
+                    'pieces': 'piece',
+                    'item': 'item',
+                    'items': 'item',
+                    'can': 'can',
+                    'cans': 'can',
+                    'package': 'package',
+                    'packages': 'package'
+                };
+                
+                const normalized = unitMap[unit?.toLowerCase()] || unit?.toLowerCase() || '';
+                return normalized;
+            }
+            
+            function formatQuantityWithUnit(quantity, unit) {
+                // Format quantity nicely with units
+                let formattedQuantity;
+                
+                if (quantity === Math.floor(quantity)) {
+                    formattedQuantity = quantity.toString();
+                } else if (quantity < 1) {
+                    // Handle common fractions
+                    const common = [
+                        [0.25, '¼'], [0.333, '⅓'], [0.5, '½'], 
+                        [0.666, '⅔'], [0.75, '¾']
+                    ];
+                    let found = false;
+                    for (const [value, fraction] of common) {
+                        if (Math.abs(quantity - value) < 0.05) {
+                            formattedQuantity = fraction;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        formattedQuantity = quantity.toFixed(2);
+                    }
+                } else {
+                    // Handle mixed numbers like 1.5 -> 1½
+                    const whole = Math.floor(quantity);
+                    const fraction = quantity - whole;
+                    if (Math.abs(fraction - 0.5) < 0.05) {
+                        formattedQuantity = whole + '½';
+                    } else if (Math.abs(fraction - 0.25) < 0.05) {
+                        formattedQuantity = whole + '¼';
+                    } else if (Math.abs(fraction - 0.75) < 0.05) {
+                        formattedQuantity = whole + '¾';
+                    } else if (Math.abs(fraction - 0.333) < 0.05) {
+                        formattedQuantity = whole + '⅓';
+                    } else if (Math.abs(fraction - 0.666) < 0.05) {
+                        formattedQuantity = whole + '⅔';
+                    } else {
+                        formattedQuantity = quantity.toFixed(1);
+                    }
+                }
+                
+                return \`\${formattedQuantity} \${unit}\`;
+            }
+            
+            function calculateIngredientQuantityWithUnit(ingredientValue, multiplier) {
+                // Extract numerical quantity and unit from ingredient string
+                const match = ingredientValue.match(/^(\\d*\\.?\\d+(?:\\/\\d+)?)\\s*(\\S*)?\\s*(.*)/);
+                if (match) {
+                    let [, quantityStr, unit, rest] = match;
+                    
+                    // Handle fractions
+                    let quantity;
+                    if (quantityStr.includes('/')) {
+                        const [num, den] = quantityStr.split('/');
+                        quantity = parseFloat(num) / parseFloat(den);
+                    } else {
+                        quantity = parseFloat(quantityStr);
+                    }
+                    
+                    const scaledQuantity = quantity * multiplier;
+                    const normalizedUnit = normalizeUnit(unit);
+                    
+                    return {
+                        quantity: scaledQuantity,
+                        unit: unit,
+                        normalizedUnit: normalizedUnit,
+                        displayText: null
+                    };
+                }
+                
+                // If no clear quantity found, return as-is
+                return {
+                    quantity: 1 * multiplier,
+                    unit: null,
+                    normalizedUnit: '',
+                    displayText: ingredientValue.includes(' ') ? ingredientValue : '1'
+                };
             }
             
             function syncGroceryList() {
                 // Calculate ingredient quantities from current meal quantities
                 const ingredientQuantities = {};
+                const ingredientQuantitiesByUnit = {}; // Track by normalized unit
+                
                 Object.entries(mealQuantities).forEach(([recipeId, mealQty]) => {
                     if (mealQty > 0) {
                         const recipe = recipes.find(r => r.id === recipeId);
                         if (recipe) {
                             Object.entries(recipe.variables || {}).forEach(([ingredient, value]) => {
                                 const ingredientName = ingredient.replace(/_/g, ' ');
-                                const totalQuantity = calculateIngredientQuantity(value, mealQty);
+                                const result = calculateIngredientQuantityWithUnit(value, mealQty);
                                 
-                                if (ingredientQuantities[ingredientName]) {
-                                    ingredientQuantities[ingredientName] += totalQuantity;
+                                // Create a unique key for this ingredient + unit combination
+                                const key = \`\${ingredientName}|\${result.normalizedUnit}\`;
+                                
+                                if (ingredientQuantitiesByUnit[key]) {
+                                    ingredientQuantitiesByUnit[key].quantity += result.quantity;
                                 } else {
-                                    ingredientQuantities[ingredientName] = totalQuantity;
+                                    ingredientQuantitiesByUnit[key] = {
+                                        ingredientName,
+                                        quantity: result.quantity,
+                                        unit: result.unit,
+                                        normalizedUnit: result.normalizedUnit,
+                                        displayText: result.displayText
+                                    };
                                 }
                             });
                         }
+                    }
+                });
+                
+                // Convert back to simple format for display
+                Object.values(ingredientQuantitiesByUnit).forEach(item => {
+                    if (item.unit) {
+                        ingredientQuantities[item.ingredientName] = formatQuantityWithUnit(item.quantity, item.unit);
+                    } else {
+                        ingredientQuantities[item.ingredientName] = item.displayText || item.quantity.toString();
                     }
                 });
                 
@@ -763,8 +922,7 @@ app.get('/grocery-list', (req, res) => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        ingredients: Object.keys(ingredientQuantities),
-                        quantities: ingredientQuantities
+                        ingredients: Object.keys(ingredientQuantities)
                     })
                 });
             }
@@ -816,7 +974,7 @@ app.get('/grocery-list', (req, res) => {
                 ingredientsList.innerHTML = sortedItems
                     .map(item => {
                         const quantity = ingredientQuantities[item.ingredient_name];
-                        const quantityDisplay = quantity ? formatQuantity(quantity) : '1';
+                        const quantityDisplay = quantity || '1';
                         
                         return \`
                         <li class="grocery-item \${item.is_checked ? 'checked' : ''}" 
@@ -828,7 +986,7 @@ app.get('/grocery-list', (req, res) => {
                                        \${item.is_checked ? 'checked' : ''}>
                                 <div class="ingredient-info">
                                     <span class="ingredient-text">\${item.ingredient_name}</span>
-                                    <span class="ingredient-quantity">(\${quantityDisplay})</span>
+                                    <span class="ingredient-quantity">\${quantityDisplay}</span>
                                 </div>
                             </label>
                         </li>
@@ -1043,6 +1201,7 @@ app.get('/grocery-list', (req, res) => {
             function updateGroceryDisplayForNonSignedIn() {
                 // For non-signed-in users, show simple list without persistence
                 const ingredientQuantities = {};
+                const ingredientQuantitiesByUnit = {}; // Track by normalized unit
                 const selectedMeals = [];
                 
                 try {
@@ -1058,15 +1217,33 @@ app.get('/grocery-list', (req, res) => {
                             selectedMeals.push({ ...recipe, quantity: mealQty });
                             Object.entries(recipe.variables || {}).forEach(([ingredient, value]) => {
                                 const ingredientName = ingredient.replace(/_/g, ' ');
-                                const totalQuantity = calculateIngredientQuantity(value, mealQty);
+                                const result = calculateIngredientQuantityWithUnit(value, mealQty);
                                 
-                                if (ingredientQuantities[ingredientName]) {
-                                    ingredientQuantities[ingredientName] += totalQuantity;
+                                // Create a unique key for this ingredient + unit combination
+                                const key = \`\${ingredientName}|\${result.normalizedUnit}\`;
+                                
+                                if (ingredientQuantitiesByUnit[key]) {
+                                    ingredientQuantitiesByUnit[key].quantity += result.quantity;
                                 } else {
-                                    ingredientQuantities[ingredientName] = totalQuantity;
+                                    ingredientQuantitiesByUnit[key] = {
+                                        ingredientName,
+                                        quantity: result.quantity,
+                                        unit: result.unit,
+                                        normalizedUnit: result.normalizedUnit,
+                                        displayText: result.displayText
+                                    };
                                 }
                             });
                         }
+                    }
+                });
+                
+                // Convert back to simple format for display
+                Object.values(ingredientQuantitiesByUnit).forEach(item => {
+                    if (item.unit) {
+                        ingredientQuantities[item.ingredientName] = formatQuantityWithUnit(item.quantity, item.unit);
+                    } else {
+                        ingredientQuantities[item.ingredientName] = item.displayText || item.quantity.toString();
                     }
                 });
                 
@@ -1076,7 +1253,7 @@ app.get('/grocery-list', (req, res) => {
                     .sort()
                     .map(ingredient => {
                         const quantity = ingredientQuantities[ingredient];
-                        const quantityDisplay = quantity ? formatQuantity(quantity) : '1';
+                        const quantityDisplay = quantity || '1';
                         
                         return \`
                         <li class="grocery-item" data-ingredient="\${ingredient}">
@@ -1085,7 +1262,7 @@ app.get('/grocery-list', (req, res) => {
                                 <input type="checkbox" class="grocery-checkbox" data-ingredient="\${ingredient}">
                                 <div class="ingredient-info">
                                     <span class="ingredient-text">\${ingredient}</span>
-                                    <span class="ingredient-quantity">(\${quantityDisplay})</span>
+                                    <span class="ingredient-quantity">\${quantityDisplay}</span>
                                 </div>
                             </label>
                         </li>
@@ -1279,6 +1456,13 @@ app.get('/grocery-list', (req, res) => {
                     const quantity = mealQuantities[recipeId] || 1;
                     window.location.href = \`/recipe/\${recipeId}?quantity=\${quantity}\`;
                 }
+            }
+        });
+        
+        // Add event listener for purchased button
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'purchasedBtn') {
+                markPurchased();
             }
         });
         
