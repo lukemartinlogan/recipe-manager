@@ -810,3 +810,80 @@ h1 {
     height: 20px;
     margin-right: 12px;
 }
+
+/* Labels Section */
+.labels-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.labels-section h2 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.labels-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.label-checkbox {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.label-checkbox:hover {
+    background: #e9ecef;
+    border-color: #007bff;
+    transform: translateY(-1px);
+}
+
+.label-checkbox input[type="checkbox"] {
+    margin: 0 0.5rem 0 0;
+    cursor: pointer;
+}
+
+.label-checkbox input[type="checkbox"]:checked + .label-text {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.label-checkbox:has(input:checked) {
+    background: #e7f3ff;
+    border-color: #007bff;
+    box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+}
+
+.label-text {
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.clear-labels-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.clear-labels-btn:hover {
+    background: #5a6268;
+}

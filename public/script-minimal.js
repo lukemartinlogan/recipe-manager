@@ -124,28 +124,48 @@ function updateQuantityInputs() {
     });
 }
 
-// Search functionality
+// Search and filter functionality
 function performSearch(query) {
-    const recipeGrid = document.getElementById('recipeGrid');
+    applyFilters();
+}
+
+function applyFilters() {
+    const searchQuery = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    
+    // Get selected labels from checkboxes
+    const selectedLabels = Array.from(document.querySelectorAll('.label-filter-checkbox:checked')).map(cb => cb.value);
+    
     const recipeTiles = document.querySelectorAll('.recipe-tile');
     
-    if (!query.trim()) {
-        // Show all recipes if search is empty
-        recipeTiles.forEach(tile => {
-            tile.style.display = 'block';
-        });
-        return;
-    }
-    
-    // Filter recipes based on title match
     recipeTiles.forEach(tile => {
+        const recipeId = tile.getAttribute('data-recipe-id');
         const title = tile.querySelector('.recipe-title').textContent.toLowerCase();
-        if (title.includes(query.toLowerCase())) {
+        
+        // Find the recipe data
+        const recipe = typeof allRecipes !== 'undefined' ? allRecipes.find(r => r.id === recipeId) : null;
+        const recipeLabels = recipe ? recipe.labels || [] : [];
+        
+        // Check search query match
+        const titleMatch = !searchQuery || title.includes(searchQuery);
+        
+        // Check label filter match
+        const labelMatch = selectedLabels.length === 0 || 
+                          selectedLabels.some(selectedLabel => recipeLabels.includes(selectedLabel));
+        
+        // Show tile if both conditions are met
+        if (titleMatch && labelMatch) {
             tile.style.display = 'block';
         } else {
             tile.style.display = 'none';
         }
     });
+}
+
+function clearAllLabelCheckboxes() {
+    document.querySelectorAll('.label-filter-checkbox').forEach(cb => {
+        cb.checked = false;
+    });
+    applyFilters();
 }
 
 // Event delegation and initialization
@@ -209,6 +229,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.target.value = '';
                 performSearch('');
             }
+        });
+    }
+    
+    
+    // Label checkbox handlers
+    document.querySelectorAll('.label-filter-checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            applyFilters();
+        });
+    });
+    
+    // Clear all labels button handler
+    const clearAllLabelsBtn = document.getElementById('clearAllLabels');
+    if (clearAllLabelsBtn) {
+        clearAllLabelsBtn.addEventListener('click', function() {
+            clearAllLabelCheckboxes();
         });
     }
     

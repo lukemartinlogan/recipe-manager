@@ -100,7 +100,33 @@ class RecipeParser {
       variables[varName] = value.trim();
     }
     
-    return { variables, originalMarkdown: markdown };
+    // Extract labels from labels section
+    const labels = this.extractLabels(markdown);
+    
+    return { variables, labels, originalMarkdown: markdown };
+  }
+
+  static extractLabels(markdown) {
+    const labels = [];
+    
+    // Look for a ## Labels section
+    const labelsMatch = markdown.match(/^##\s*Labels?\s*$(.*?)(?=^##|\s*$)/mis);
+    if (labelsMatch) {
+      const labelsContent = labelsMatch[1];
+      
+      // Extract markdown list items (- item or * item)
+      const labelMatches = labelsContent.match(/^[\s]*[-*]\s*(.+)$/gm);
+      if (labelMatches) {
+        labelMatches.forEach(labelMatch => {
+          const label = labelMatch.replace(/^[\s]*[-*]\s*/, '').trim();
+          if (label) {
+            labels.push(label.toLowerCase());
+          }
+        });
+      }
+    }
+    
+    return labels;
   }
 
   static substituteVariables(markdown, variables, multiplier = 1, availableCups = []) {
@@ -289,7 +315,7 @@ function getRecipes() {
       } else if (item.endsWith('.md')) {
         // Process markdown file
         const content = fs.readFileSync(fullPath, 'utf8');
-        const { variables } = RecipeParser.parseRecipe(content);
+        const { variables, labels } = RecipeParser.parseRecipe(content);
         
         // Extract title from first line
         const titleMatch = content.match(/^#\s*(.+)$/m);
@@ -300,13 +326,24 @@ function getRecipes() {
           ? `${relativePath}/${item.replace('.md', '')}`
           : item.replace('.md', '');
         
+        // Combine explicit labels with automatic directory label
+        const allLabels = [...labels];
+        if (relativePath) {
+          // Add parent directory name as automatic label
+          const directoryLabel = relativePath.split('/').pop().toLowerCase();
+          if (!allLabels.includes(directoryLabel)) {
+            allLabels.unshift(directoryLabel); // Add as first label
+          }
+        }
+        
         recipes.push({
           id: recipeId,
           title,
           filename: item,
           relativePath,
           fullPath: fullPath,
-          variables
+          variables,
+          labels: allLabels
         });
       }
     }
@@ -385,6 +422,10 @@ app.get('/', (req, res) => {
     console.log('Recipes loaded:', recipes.length);
     const isSignedIn = !!req.session.userId;
     console.log('User signed in:', isSignedIn);
+    
+    // Collect all unique labels
+    const allLabels = [...new Set(recipes.flatMap(recipe => recipe.labels || []))].sort();
+    
     console.log('About to send response');
   res.send(`
 <!DOCTYPE html>
@@ -415,6 +456,21 @@ app.get('/', (req, res) => {
     
     <div class="main-content">
         <h1>Recipe Collection</h1>
+        
+        <!-- Labels Section -->
+        <div class="labels-section">
+            <h2>Filter by Labels</h2>
+            <div class="labels-checkboxes" id="labelsCheckboxes">
+                ${allLabels.map(label => `
+                    <label class="label-checkbox">
+                        <input type="checkbox" value="${label}" class="label-filter-checkbox">
+                        <span class="label-text">${label}</span>
+                    </label>
+                `).join('')}
+            </div>
+            <button id="clearAllLabels" class="clear-labels-btn">Clear All</button>
+        </div>
+        
         <div class="recipe-grid" id="recipeGrid">
             ${recipes.map(recipe => `
                 <div class="recipe-tile" data-recipe-id="${recipe.id}">
@@ -454,6 +510,12 @@ app.get('/', (req, res) => {
     <script>
         const isSignedIn = ${isSignedIn};
         const currentUser = ${isSignedIn ? `"${req.session.username}"` : 'null'};
+        const allRecipes = ${JSON.stringify(recipes.map(r => ({
+          id: r.id,
+          title: r.title,
+          labels: r.labels || []
+        })))};
+        const allLabels = ${JSON.stringify(allLabels)};
     </script>
     <script src="/script-minimal.js"></script>
 </body>
@@ -1205,6 +1267,70 @@ app.get('/api/search/:query', (req, res) => {
     recipe.title.toLowerCase().includes(query)
   );
   res.json(filtered);
+});
+
+// API endpoint for getting all labels
+app.get('/api/labels', (req, res) => {
+  try {
+    const recipes = getRecipes();
+    const allLabels = [...new Set(recipes.flatMap(recipe => recipe.labels || []))].sort();
+    res.json({ labels: allLabels });
+  } catch (error) {
+    console.error('Error getting labels:', error);
+    res.status(500).json({ error: 'Failed to get labels' });
+  }
+});
+
+// API endpoint to generate labels.md file
+app.post('/api/generate-labels', (req, res) => {
+  try {
+    const recipes = getRecipes();
+    const labelsByCategory = {};
+    
+    // Group labels by category and track which recipes use them
+    recipes.forEach(recipe => {
+      const labels = recipe.labels || [];
+      labels.forEach(label => {
+        if (!labelsByCategory[label]) {
+          labelsByCategory[label] = [];
+        }
+        labelsByCategory[label].push(recipe.title);
+      });
+    });
+    
+    // Generate markdown content
+    let markdownContent = `# Recipe Labels\n\n`;
+    markdownContent += `This file contains all labels used across the recipe collection.\n\n`;
+    markdownContent += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
+    markdownContent += `## All Labels (${Object.keys(labelsByCategory).length})\n\n`;
+    
+    // Sort labels alphabetically
+    const sortedLabels = Object.keys(labelsByCategory).sort();
+    
+    sortedLabels.forEach(label => {
+      const recipes = labelsByCategory[label];
+      markdownContent += `### ${label}\n`;
+      markdownContent += `Used in ${recipes.length} recipe${recipes.length > 1 ? 's' : ''}:\n`;
+      recipes.forEach(recipeTitle => {
+        markdownContent += `- ${recipeTitle}\n`;
+      });
+      markdownContent += `\n`;
+    });
+    
+    // Write the file
+    const labelsPath = path.join(__dirname, 'labels.md');
+    fs.writeFileSync(labelsPath, markdownContent);
+    
+    res.json({ 
+      success: true, 
+      message: 'Labels file generated successfully',
+      labelCount: sortedLabels.length,
+      recipeCount: recipes.length 
+    });
+  } catch (error) {
+    console.error('Error generating labels file:', error);
+    res.status(500).json({ error: 'Failed to generate labels file' });
+  }
 });
 
 app.listen(PORT, '0.0.0.0', () => {
