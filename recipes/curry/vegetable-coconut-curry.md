@@ -7,12 +7,12 @@
 - [ ] $lime_juice = 1 tablespoon lime juice$
 
 ### Fresh Vegetables / Plants
-- [ ] $onion = some$
-- [ ] $bell_pepper = some$
-- [ ] $broccoli = some$ 
-- [ ] $spinach = some$ 
-- [ ] $water_chesnuts = some$
-- [ ] $bamboo_shoots = some$
+- [ ] $onion = 1$
+- [ ] $bell_pepper = 1$
+- [ ] $broccoli = 1$ 
+- [ ] $spinach = 1$ 
+- [ ] $water_chesnuts = 1$
+- [ ] $bamboo_shoots = 1$
 - [ ] $cilantro = 1/4 cup cilantro and/or basil diced$
 
 ### Spices
