@@ -839,6 +839,11 @@ h1 {
     color: #888;
 }
 
+.grocery-item.checked .ingredient-quantity {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
 .grocery-item label {
     display: flex;
     align-items: center;
@@ -854,10 +859,24 @@ h1 {
     flex-shrink: 0;
 }
 
-.ingredient-text {
+.ingredient-info {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     cursor: inherit;
     pointer-events: none;
+}
+
+.ingredient-text {
+    font-weight: 500;
+    color: #333;
+}
+
+.ingredient-quantity {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: normal;
+    margin-top: 2px;
 }
 
 /* Search highlighting */

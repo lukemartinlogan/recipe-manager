@@ -716,26 +716,56 @@ app.get('/grocery-list', (req, res) => {
                 updateGroceryDisplayForNonSignedIn();
             }
             
+            function calculateIngredientQuantity(ingredientValue, multiplier) {
+                // Extract numerical quantity from ingredient string
+                const match = ingredientValue.match(/^(\d*\.?\d+(?:\/\d+)?)/);
+                if (match) {
+                    let quantity = match[1];
+                    // Handle fractions
+                    if (quantity.includes('/')) {
+                        const [num, den] = quantity.split('/');
+                        quantity = parseFloat(num) / parseFloat(den);
+                    } else {
+                        quantity = parseFloat(quantity);
+                    }
+                    return quantity * multiplier;
+                }
+                // If no clear quantity found, default to 1
+                return multiplier;
+            }
+            
             function syncGroceryList() {
-                // Get all ingredients from current meal quantities
-                const allIngredients = [];
-                Object.entries(mealQuantities).forEach(([recipeId, quantity]) => {
-                    if (quantity > 0) {
+                // Calculate ingredient quantities from current meal quantities
+                const ingredientQuantities = {};
+                Object.entries(mealQuantities).forEach(([recipeId, mealQty]) => {
+                    if (mealQty > 0) {
                         const recipe = recipes.find(r => r.id === recipeId);
                         if (recipe) {
-                            Object.keys(recipe.variables || {}).forEach(ingredient => {
+                            Object.entries(recipe.variables || {}).forEach(([ingredient, value]) => {
                                 const ingredientName = ingredient.replace(/_/g, ' ');
-                                allIngredients.push(ingredientName);
+                                const totalQuantity = calculateIngredientQuantity(value, mealQty);
+                                
+                                if (ingredientQuantities[ingredientName]) {
+                                    ingredientQuantities[ingredientName] += totalQuantity;
+                                } else {
+                                    ingredientQuantities[ingredientName] = totalQuantity;
+                                }
                             });
                         }
                     }
                 });
                 
+                // Store quantities for later use
+                window.currentIngredientQuantities = ingredientQuantities;
+                
                 // Sync with database
                 return fetch('/api/grocery-items/sync', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ingredients: [...new Set(allIngredients)] })
+                    body: JSON.stringify({ 
+                        ingredients: Object.keys(ingredientQuantities),
+                        quantities: ingredientQuantities
+                    })
                 });
             }
             
@@ -752,6 +782,27 @@ app.get('/grocery-list', (req, res) => {
                     });
             }
             
+            function formatQuantity(quantity) {
+                // Round to reasonable precision and format nicely
+                if (quantity === Math.floor(quantity)) {
+                    return quantity.toString();
+                } else if (quantity < 1) {
+                    // Handle fractions
+                    const common = [
+                        [0.25, '¼'], [0.333, '⅓'], [0.5, '½'], 
+                        [0.666, '⅔'], [0.75, '¾']
+                    ];
+                    for (const [value, fraction] of common) {
+                        if (Math.abs(quantity - value) < 0.05) {
+                            return fraction;
+                        }
+                    }
+                    return quantity.toFixed(2);
+                } else {
+                    return quantity.toFixed(1);
+                }
+            }
+            
             function displayGroceryItems(items) {
                 // Sort items so unchecked items come first, then checked items
                 const sortedItems = items.sort((a, b) => {
@@ -760,8 +811,14 @@ app.get('/grocery-list', (req, res) => {
                     return a.sort_order - b.sort_order;
                 });
                 
+                const ingredientQuantities = window.currentIngredientQuantities || {};
+                
                 ingredientsList.innerHTML = sortedItems
-                    .map(item => \`
+                    .map(item => {
+                        const quantity = ingredientQuantities[item.ingredient_name];
+                        const quantityDisplay = quantity ? formatQuantity(quantity) : '1';
+                        
+                        return \`
                         <li class="grocery-item \${item.is_checked ? 'checked' : ''}" 
                             data-ingredient="\${item.ingredient_name}">
                             <div class="drag-handle">≡</div>
@@ -769,10 +826,14 @@ app.get('/grocery-list', (req, res) => {
                                 <input type="checkbox" class="grocery-checkbox" 
                                        data-ingredient="\${item.ingredient_name}" 
                                        \${item.is_checked ? 'checked' : ''}>
-                                <span class="ingredient-text">\${item.ingredient_name}</span>
+                                <div class="ingredient-info">
+                                    <span class="ingredient-text">\${item.ingredient_name}</span>
+                                    <span class="ingredient-quantity">(\${quantityDisplay})</span>
+                                </div>
                             </label>
                         </li>
-                    \`)
+                        \`;
+                    })
                     .join('');
                 
                 initializeDragAndDrop();
@@ -981,7 +1042,7 @@ app.get('/grocery-list', (req, res) => {
             
             function updateGroceryDisplayForNonSignedIn() {
                 // For non-signed-in users, show simple list without persistence
-                const allIngredients = new Set();
+                const ingredientQuantities = {};
                 const selectedMeals = [];
                 
                 try {
@@ -990,30 +1051,46 @@ app.get('/grocery-list', (req, res) => {
                     mealQuantities = {};
                 }
                 
-                Object.entries(mealQuantities).forEach(([recipeId, quantity]) => {
-                    if (quantity > 0) {
+                Object.entries(mealQuantities).forEach(([recipeId, mealQty]) => {
+                    if (mealQty > 0) {
                         const recipe = recipes.find(r => r.id === recipeId);
                         if (recipe) {
-                            selectedMeals.push({ ...recipe, quantity });
-                            Object.keys(recipe.variables || {}).forEach(ingredient => {
+                            selectedMeals.push({ ...recipe, quantity: mealQty });
+                            Object.entries(recipe.variables || {}).forEach(([ingredient, value]) => {
                                 const ingredientName = ingredient.replace(/_/g, ' ');
-                                allIngredients.add(ingredientName);
+                                const totalQuantity = calculateIngredientQuantity(value, mealQty);
+                                
+                                if (ingredientQuantities[ingredientName]) {
+                                    ingredientQuantities[ingredientName] += totalQuantity;
+                                } else {
+                                    ingredientQuantities[ingredientName] = totalQuantity;
+                                }
                             });
                         }
                     }
                 });
                 
-                ingredientsList.innerHTML = Array.from(allIngredients)
+                window.currentIngredientQuantities = ingredientQuantities;
+                
+                ingredientsList.innerHTML = Object.keys(ingredientQuantities)
                     .sort()
-                    .map(ingredient => \`
+                    .map(ingredient => {
+                        const quantity = ingredientQuantities[ingredient];
+                        const quantityDisplay = quantity ? formatQuantity(quantity) : '1';
+                        
+                        return \`
                         <li class="grocery-item" data-ingredient="\${ingredient}">
                             <div class="drag-handle">≡</div>
                             <label>
                                 <input type="checkbox" class="grocery-checkbox" data-ingredient="\${ingredient}">
-                                <span class="ingredient-text">\${ingredient}</span>
+                                <div class="ingredient-info">
+                                    <span class="ingredient-text">\${ingredient}</span>
+                                    <span class="ingredient-quantity">(\${quantityDisplay})</span>
+                                </div>
                             </label>
                         </li>
-                    \`)
+                        \`;
+                    })
                     .join('');
                 
                 // Initialize drag and drop for non-signed-in users too
