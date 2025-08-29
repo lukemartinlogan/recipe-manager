@@ -14,6 +14,7 @@
 
 ### Beans
 - [ ] $black_beans = 1 can (15oz)$
+- [ ] $kidney_beans = 1 can (15oz)$
 
 ### Spices
 - [ ] $garlic = 1tbsp$
