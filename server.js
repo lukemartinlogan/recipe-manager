@@ -839,7 +839,66 @@ app.get('/grocery-list', (req, res) => {
             }
             
             function calculateIngredientQuantityWithUnit(ingredientValue, multiplier) {
-                // Extract numerical quantity and unit from ingredient string
+                // Handle comma-separated multiple units (e.g., "1 can, 15oz")
+                const parts = ingredientValue.split(',').map(part => part.trim());
+                
+                if (parts.length > 1) {
+                    // Multiple units found - try to parse each part
+                    const parsedParts = parts.map(part => {
+                        const match = part.match(/^(\\d*\\.?\\d+(?:\\/\\d+)?)\\s*(\\S*)?\\s*(.*)/);
+                        if (match) {
+                            let [, quantityStr, unit, rest] = match;
+                            
+                            // Handle fractions
+                            let quantity;
+                            if (quantityStr.includes('/')) {
+                                const [num, den] = quantityStr.split('/');
+                                quantity = parseFloat(num) / parseFloat(den);
+                            } else {
+                                quantity = parseFloat(quantityStr);
+                            }
+                            
+                            return {
+                                quantity: quantity * multiplier,
+                                unit: unit,
+                                rest: rest,
+                                originalPart: part
+                            };
+                        }
+                        return { originalPart: part, quantity: null, unit: null, rest: part };
+                    });
+                    
+                    // Find the best unit to use for display (prefer weight/volume over count)
+                    const weightVolumeUnits = ['oz', 'lb', 'g', 'kg', 'cups', 'cup', 'tbsp', 'tsp', 'ml', 'l'];
+                    let bestPart = parsedParts.find(p => p.unit && weightVolumeUnits.includes(p.unit.toLowerCase()));
+                    
+                    if (!bestPart) {
+                        // If no weight/volume unit found, use the first valid parsed part
+                        bestPart = parsedParts.find(p => p.quantity !== null) || parsedParts[0];
+                    }
+                    
+                    if (bestPart && bestPart.quantity !== null) {
+                        const normalizedUnit = normalizeUnit(bestPart.unit);
+                        return {
+                            quantity: bestPart.quantity,
+                            unit: bestPart.unit,
+                            normalizedUnit: normalizedUnit,
+                            displayText: null,
+                            allParts: parsedParts // Store all parts for potential future use
+                        };
+                    }
+                    
+                    // Fallback: return combined display text
+                    return {
+                        quantity: 1 * multiplier,
+                        unit: null,
+                        normalizedUnit: '',
+                        displayText: ingredientValue,
+                        allParts: parsedParts
+                    };
+                }
+                
+                // Single unit - original logic
                 const match = ingredientValue.match(/^(\\d*\\.?\\d+(?:\\/\\d+)?)\\s*(\\S*)?\\s*(.*)/);
                 if (match) {
                     let [, quantityStr, unit, rest] = match;
@@ -909,8 +968,10 @@ app.get('/grocery-list', (req, res) => {
                 Object.values(ingredientQuantitiesByUnit).forEach(item => {
                     if (item.unit) {
                         ingredientQuantities[item.ingredientName] = formatQuantityWithUnit(item.quantity, item.unit);
+                    } else if (item.displayText) {
+                        ingredientQuantities[item.ingredientName] = item.displayText;
                     } else {
-                        ingredientQuantities[item.ingredientName] = item.displayText || item.quantity.toString();
+                        ingredientQuantities[item.ingredientName] = item.quantity.toString();
                     }
                 });
                 
@@ -1242,8 +1303,10 @@ app.get('/grocery-list', (req, res) => {
                 Object.values(ingredientQuantitiesByUnit).forEach(item => {
                     if (item.unit) {
                         ingredientQuantities[item.ingredientName] = formatQuantityWithUnit(item.quantity, item.unit);
+                    } else if (item.displayText) {
+                        ingredientQuantities[item.ingredientName] = item.displayText;
                     } else {
-                        ingredientQuantities[item.ingredientName] = item.displayText || item.quantity.toString();
+                        ingredientQuantities[item.ingredientName] = item.quantity.toString();
                     }
                 });
                 

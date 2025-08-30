@@ -3,18 +3,18 @@
 ## Ingredients
 ### Protein and Liquid
 - [ ] $rotisserie_chicken = 2 cups$
-- [ ] $olive_oil = 1 tablespoon$
+- [ ] $olive_oil = 1 tbsp$
 - [ ] $chicken_broth = 2 cups$
 
 ### Vegetables
 - [ ] $onion = 1$
 - [ ] $bell_pepper = 1$
-- [ ] $corn = 1 can (15oz)$
-- [ ] $diced_tomatoes = 1 can (15oz)$
+- [ ] $corn = 1 can, 15oz$
+- [ ] $diced_tomatoes = 1 can, 15oz$
 
 ### Beans
-- [ ] $black_beans = 1 can (15oz)$
-- [ ] $kidney_beans = 1 can (15oz)$
+- [ ] $black_beans = 1 can, 15oz$
+- [ ] $kidney_beans = 1 can, 15oz$
 
 ### Spices
 - [ ] $garlic = 1tbsp$
