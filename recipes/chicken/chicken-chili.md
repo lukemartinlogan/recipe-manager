@@ -39,7 +39,7 @@
 2. Add $onion$ and $bell_pepper$, cook for 5 minutes until softened
 3. Add $garlic$ and cook for 1 minute until fragrant
 4. Add $chicken$, $diced_tomatoes$, $chicken_broth$, $black_beans$, and $corn$
-5. Stir in $chili_powder$, $cumin$, $oregano$, and $chili_flakes$
+5. Stir in spices
 6. Bring to a boil, then reduce heat and simmer for 20-25 minutes
 7. Season with $salt$ and $pepper$ to taste
 8. Serve hot with desired toppings
