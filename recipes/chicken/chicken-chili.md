@@ -1,5 +1,7 @@
 # Chicken Chili
 
+[recipe_icon](chicken-chili.jpg)
+
 ## Ingredients
 ### Protein and Liquid
 - [ ] $rotisserie_chicken = 2 cups$

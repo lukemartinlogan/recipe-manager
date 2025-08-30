@@ -103,7 +103,10 @@ class RecipeParser {
     // Extract labels from labels section
     const labels = this.extractLabels(markdown);
     
-    return { variables, labels, originalMarkdown: markdown };
+    // Extract recipe icon link
+    const recipeIcon = this.extractRecipeIcon(markdown);
+    
+    return { variables, labels, recipeIcon, originalMarkdown: markdown };
   }
 
   static extractLabels(markdown) {
@@ -127,6 +130,15 @@ class RecipeParser {
     }
     
     return labels;
+  }
+
+  static extractRecipeIcon(markdown) {
+    // Look for [recipe_icon](path/to/image.jpg) anywhere in the markdown
+    const iconMatch = markdown.match(/\[recipe_icon\]\(([^)]+)\)/);
+    if (iconMatch) {
+      return iconMatch[1].trim(); // Return the path/URL
+    }
+    return null; // No recipe icon found
   }
 
   static substituteVariables(markdown, variables, multiplier = 1, availableCups = []) {
@@ -315,7 +327,7 @@ function getRecipes() {
       } else if (item.endsWith('.md')) {
         // Process markdown file
         const content = fs.readFileSync(fullPath, 'utf8');
-        const { variables, labels } = RecipeParser.parseRecipe(content);
+        const { variables, labels, recipeIcon } = RecipeParser.parseRecipe(content);
         
         // Extract title from first line
         const titleMatch = content.match(/^#\s*(.+)$/m);
@@ -336,6 +348,31 @@ function getRecipes() {
           }
         }
         
+        // Process recipe icon path if it exists
+        let processedRecipeIcon = null;
+        if (recipeIcon) {
+          // If it's a relative path, make it relative to the recipe file's directory
+          if (!recipeIcon.startsWith('http') && !recipeIcon.startsWith('/')) {
+            // Make the path relative to the recipe's directory
+            const recipeDir = path.dirname(fullPath);
+            const iconPath = path.resolve(recipeDir, recipeIcon);
+            // Convert to a path relative to the public directory
+            const publicDir = path.join(__dirname, 'public');
+            try {
+              processedRecipeIcon = path.relative(publicDir, iconPath).replace(/\\/g, '/');
+              // Ensure it starts with / for web serving
+              if (!processedRecipeIcon.startsWith('/')) {
+                processedRecipeIcon = '/' + processedRecipeIcon;
+              }
+            } catch (e) {
+              // If path resolution fails, just use the original path
+              processedRecipeIcon = recipeIcon;
+            }
+          } else {
+            processedRecipeIcon = recipeIcon;
+          }
+        }
+        
         recipes.push({
           id: recipeId,
           title,
@@ -343,7 +380,8 @@ function getRecipes() {
           relativePath,
           fullPath: fullPath,
           variables,
-          labels: allLabels
+          labels: allLabels,
+          recipeIcon: processedRecipeIcon
         });
       }
     }
@@ -475,7 +513,10 @@ app.get('/', (req, res) => {
             ${recipes.map(recipe => `
                 <div class="recipe-tile" data-recipe-id="${recipe.id}">
                     <div class="recipe-image">
-                        <img src="/images/${recipe.id}.jpg" alt="${recipe.title}">
+                        ${recipe.recipeIcon 
+                          ? `<img src="${recipe.recipeIcon}" alt="${recipe.title}">`
+                          : `<div class="recipe-placeholder" style="background: linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}); height: 200px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">${recipe.title.charAt(0).toUpperCase()}</div>`
+                        }
                     </div>
                     <div class="recipe-info">
                         <h3 class="recipe-title">${recipe.title}</h3>
@@ -1243,7 +1284,10 @@ app.get('/grocery-list', (req, res) => {
                 mealsList.innerHTML = selectedMeals
                     .map(meal => \`
                         <div class="meal-tile-small clickable-meal" data-recipe-id="\${meal.id}">
-                            <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
+                            \${meal.recipeIcon 
+                              ? \`<img src="\${meal.recipeIcon}" alt="\${meal.title}">\`
+                              : \`<div class="recipe-placeholder-small" style="width: 60px; height: 60px; background: linear-gradient(135deg, #\${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}, #\${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;">\${meal.title.charAt(0).toUpperCase()}</div>\`
+                            }
                             <div class="meal-info">
                                 <h4>\${meal.title}</h4>
                                 <div class="meal-quantity-control">
@@ -1364,7 +1408,10 @@ app.get('/grocery-list', (req, res) => {
                 mealsList.innerHTML = selectedMeals
                     .map(meal => \`
                         <div class="meal-tile-small clickable-meal" data-recipe-id="\${meal.id}">
-                            <img src="/images/\${meal.id}.jpg" alt="\${meal.title}">
+                            \${meal.recipeIcon 
+                              ? \`<img src="\${meal.recipeIcon}" alt="\${meal.title}">\`
+                              : \`<div class="recipe-placeholder-small" style="width: 60px; height: 60px; background: linear-gradient(135deg, #\${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}, #\${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;">\${meal.title.charAt(0).toUpperCase()}</div>\`
+                            }
                             <div class="meal-info">
                                 <h4>\${meal.title}</h4>
                                 <div class="meal-quantity-control">
