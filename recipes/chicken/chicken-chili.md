@@ -19,13 +19,15 @@
 - [ ] $kidney_beans = 1 can, 15oz$
 
 ### Spices
-- [ ] $garlic = 1tbsp$
-- [ ] $chili_powder = 1 tsp$
-- [ ] $cumin = 1 tsp$
-- [ ] $oregano = 1 tsp$
-- [ ] $chili_flakes = 1/2 tsp$
+- [ ] $minced_garlic = 1tbsp$
+- [ ] $garlic_powder = 1tbsp$
+- [ ] $chili_powder = 2 tsp$
+- [ ] $cumin = 2 tsp$
+- [ ] $oregano = 2 tsp$
+- [ ] $chili_flakes = 1 tsp$
 - [ ] $salt = sea salt$
 - [ ] $black_pepper = 1tsp$
+- [ ] $cayenne_pepper = 1/2tsp$
 
 ### Optional
 - [ ] $crackers = 1$
