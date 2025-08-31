@@ -2,12 +2,15 @@
 
 ## Ingredients
 
+Spices:
 - [ ] $chicken = 1lb$
 - [ ] $garlic_powder = 1tbsp$
 - [ ] $italian_seasoning = 1tsp$
 - [ ] $black_pepper = 1tsp$
 - [ ] $cayenne_pepper = 1tsp$
 - [ ] $smoked_paprika = 1tsp$ 
+
+Wet Ingredients:
 - [ ] $Canola or coconut oil = 1tbsp$
 
 ## Steps
