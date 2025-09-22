@@ -1,7 +1,5 @@
 # Mongolian Chicken
 
-[recipe_icon](mongolian-chicken.jpg)
-
 ## Ingredients
 ### Protein
 - [ ] $chicken_breast = 1 1/4 lbs, thinly sliced$
