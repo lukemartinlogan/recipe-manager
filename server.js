@@ -259,29 +259,54 @@ class RecipeParser {
       }
     }
     
-    // Find best combination using greedy algorithm
+    // Use top two units: largest unit as integer, next smaller unit as fractional
     let remaining = totalAmount;
     const result = [];
     
-    for (const measure of available) {
-      if (remaining >= measure.value - 0.001) {
-        const count = Math.floor(remaining / measure.value + 0.001);
-        remaining -= count * measure.value;
-        
-        if (count === 1) {
-          result.push(measure.display);
-        } else {
-          result.push(`${count} ${measure.display}`);
+    // Find the largest unit that fits at least once
+    let primaryUnit = null;
+    let secondaryUnit = null;
+    
+    for (let i = 0; i < available.length; i++) {
+      if (remaining >= available[i].value - 0.001) {
+        primaryUnit = available[i];
+        // Find the next smaller unit for fractional part
+        for (let j = i + 1; j < available.length; j++) {
+          secondaryUnit = available[j];
+          break;
         }
+        break;
       }
     }
     
-    // Handle any remaining fractional amount
-    if (remaining > 0.001) {
+    if (!primaryUnit) {
+      // Amount is smaller than smallest available unit, use fractional
       const smallestUnit = available[available.length - 1];
-      const fraction = this.decimalToFraction(remaining / smallestUnit.value);
+      const fraction = this.decimalToFraction(totalAmount / smallestUnit.value);
       const unitName = smallestUnit.name.replace(/^[\d\/\.]+/, '');
-      result.push(`${fraction}${unitName}`);
+      return `${fraction}${unitName}`;
+    }
+    
+    // Calculate integer count of primary unit
+    const primaryCount = Math.floor(remaining / primaryUnit.value + 0.001);
+    remaining -= primaryCount * primaryUnit.value;
+    
+    // Add primary unit to result
+    if (primaryCount === 1) {
+      result.push(primaryUnit.display);
+    } else {
+      result.push(`${primaryCount} ${primaryUnit.display}`);
+    }
+    
+    // Handle remaining amount with secondary unit as fraction
+    if (remaining > 0.001 && secondaryUnit) {
+      const secondaryAmount = remaining / secondaryUnit.value;
+      const fraction = this.decimalToFraction(secondaryAmount);
+      const unitName = secondaryUnit.name.replace(/^[\d\/\.]+/, '');
+      
+      if (fraction !== '0' && fraction !== '') {
+        result.push(`${fraction}${unitName}`);
+      }
     }
     
     return result.join(' + ') || `${totalAmount}${measurements[measurements.length - 1].name.replace(/^[\d\/\.]+/, '')}`;
