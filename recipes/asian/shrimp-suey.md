@@ -1,4 +1,4 @@
-# Mongolian Chicken
+# Shrimp Suey
 
 ## Ingredients
 ### Protein

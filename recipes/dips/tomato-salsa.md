@@ -1,13 +1,13 @@
 # Tomato Salsa
 
 ## Ingredients
-- [ ] $tomato = 1 roma tomato, diced$
-- [ ] $onion = 1 small onion, finely diced$
-- [ ] $jalapeno = 1 jalapeno pepper, seeded and minced$
-- [ ] $oregano = 1/2 tsp dried oregano$
-- [ ] $basil = 1 tbsp fresh basil, chopped$
-- [ ] $garlic = 2 cloves garlic, minced$
-- [ ] $cilantro = 1/4 cup fresh cilantro, chopped$
+- [ ] $tomato = 4 roma tomato, diced$
+- [ ] $onion = 1 large onion, finely diced$
+- [ ] $jalapeno = 2 jalapeno pepper, seeded and minced$
+- [ ] $oregano = 2 tsp dried oregano$
+- [ ] $basil = 4 tbsp fresh basil, chopped$
+- [ ] $garlic = 2 tbsp garlic$
+- [ ] $cilantro = 1 cup fresh cilantro, chopped$
 - [ ] $salt = 1/2 tsp salt$
 - [ ] $lime = 1 lime, juiced$
 

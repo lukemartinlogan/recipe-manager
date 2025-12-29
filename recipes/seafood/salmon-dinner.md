@@ -1,9 +1,9 @@
 # Salmon Dinner
 
 ## Ingredients
-- [ ] $salmon = 4 salmon fillets$
-- [ ] $olive_oil = 2 tbsp olive oil$
-- [ ] $salt = 1 tsp salt$
+- [ ] $salmon = 1 salmon fillets$
+- [ ] $olive_oil = 1 tbsp olive oil$
+- [ ] $salt = .5 tsp salt$
 - [ ] $black_pepper = 1/2 tsp black pepper$
 - [ ] $cayenne = 1/4 tsp cayenne pepper$
 - [ ] $chili_powder = 1/2 tsp chili powder$
@@ -15,7 +15,7 @@
 - [ ] $thyme = 1 tsp fresh thyme$
 - [ ] $parsley = 1 tbsp fresh parsley$
 
-## Instructions for 4 servings
+## Instructions for 1 servings
 1. Preheat oven to 400°F
 2. Place $salmon$ on baking sheet. Season with $salt$ and $black_pepper$
 3. Combine $olive_oil$, $cayenne$, $chili_powder$, $paprika$, $garlic$, $italian_herbs$, $cumin$, and lemon zest from $lemon$ in a bowl and stir
